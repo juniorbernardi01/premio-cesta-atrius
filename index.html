@@ -1,0 +1,2485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prêmio Cesta de Limpeza — Atrius</title>
+<link rel="icon" href="" data-logo-icone>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --azul:#17479E; --azul-fraco:#EEF3FC; --ciano:#0FA3DC; --vermelho:#D42027;
+  --verde:#12864A; --verde-fraco:#E6F4EC; --amarelo:#8A6100; --amarelo-fraco:#FFF7E6;
+  --texto:#1B2027; --cinza:#77818E; --linha:#E9ECF0; --fundo:#F5F6F8; --branco:#FFF;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--fundo);color:var(--texto);
+  font-size:15px;line-height:1.4;font-variant-numeric:tabular-nums;padding-bottom:168px}
+button{font-family:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{
+  outline:2px solid var(--ciano);outline-offset:2px}
+.wrap{max-width:720px;margin:0 auto}
+
+header{position:sticky;top:0;z-index:40;background:var(--branco);box-shadow:0 1px 0 var(--linha)}
+.barra{display:flex;flex-direction:column;align-items:center;gap:4px;padding:13px 16px 9px;position:relative}
+.marca{height:44px;width:auto;display:block}
+.saudacao{font-size:14.5px;text-align:center;line-height:1.4}
+.saudacao b{font-weight:700}
+.saudacao .valor{color:var(--verde);font-weight:700}
+.programa{font-size:12px;color:var(--cinza);text-align:center;letter-spacing:.02em}
+.sair-topo{position:absolute;right:14px;top:14px;font-size:12.5px;color:var(--cinza);font-weight:500}
+#btnAdmin{right:60px;color:var(--azul);font-weight:600}
+#btnMeus{right:auto;left:14px;color:var(--azul);font-weight:600}
+
+
+.busca{padding:10px 16px 0;position:relative}
+.busca input{width:100%;border:0;background:var(--fundo);border-radius:11px;
+  padding:12px 14px 12px 42px;font-size:15px;color:var(--texto)}
+.busca svg{position:absolute;left:30px;top:21px;width:19px;height:19px;stroke:var(--cinza);fill:none;stroke-width:2}
+.abas{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding:10px 16px 11px}
+.abas::-webkit-scrollbar{display:none}
+.aba{white-space:nowrap;background:var(--fundo);color:var(--cinza);border-radius:999px;
+  padding:8px 16px;font-size:13.5px;font-weight:600}
+.aba[aria-pressed="true"]{background:var(--azul);color:var(--branco)}
+.aba em{font-style:normal;font-weight:500;opacity:.65;margin-left:4px}
+
+.barra-pedido.sem-saldo .trilho{display:none}
+.barra-pedido.sem-saldo .saldo-linha{flex-wrap:wrap;row-gap:5px}
+.selo-sem{display:inline-flex;align-items:center;gap:6px;background:var(--amarelo-fraco);
+  border:1px solid #F1DFB8;color:var(--amarelo);border-radius:999px;
+  padding:4px 11px;font-size:12.5px;font-weight:600;white-space:nowrap}
+.selo-sem::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+#saldoZero{display:flex;align-items:center;min-width:0}
+#saldoZero[hidden],#saldoNormal[hidden],#saldoLinha[hidden]{display:none}
+@media(max-width:380px){.selo-sem{font-size:12px;padding:4px 9px}}
+
+.grupo{padding:18px 16px 2px}
+.grupo h2{font-size:13px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--cinza)}
+.lista{padding:6px 12px 0}
+.item{display:flex;gap:13px;background:var(--branco);border-radius:14px;padding:12px;
+  margin-bottom:9px;align-items:stretch}
+.foto{width:88px;height:112px;flex-shrink:0;border-radius:10px;background:var(--fundo);
+  display:grid;place-items:center;overflow:hidden;position:relative;padding:5px}
+.foto img{width:100%;height:100%;object-fit:contain;display:block}
+.foto svg{width:26px;height:26px;stroke:#C4CBD3;fill:none;stroke-width:1.5}
+.lupa{position:absolute;right:5px;bottom:5px;width:20px;height:20px;border-radius:6px;
+  background:rgba(27,32,39,.55);display:grid;place-items:center;pointer-events:none}
+.lupa svg{width:12px;height:12px;stroke:#fff;stroke-width:2.4}
+.dados{flex:1;min-width:0;display:flex;flex-direction:column}
+.dados h3{font-size:15px;font-weight:600;line-height:1.3}
+.cod{font-size:12.5px;color:var(--cinza);margin-top:3px}
+.rodape-item{margin-top:auto;padding-top:9px;display:flex;align-items:flex-end;gap:10px}
+.preco{font-size:17px;font-weight:700;line-height:1.2}
+.preco small{display:block;font-size:11.5px;font-weight:500;color:var(--cinza);margin-top:1px}
+.acao{margin-left:auto}
+.mais-btn{background:var(--azul);color:var(--branco);width:38px;height:38px;border-radius:10px;
+  font-size:23px;line-height:1;display:grid;place-items:center}
+.stepper{display:flex;align-items:center;background:var(--azul-fraco);border-radius:10px;overflow:hidden}
+.stepper button{width:36px;height:38px;font-size:20px;color:var(--azul);font-weight:600}
+.stepper b{min-width:26px;text-align:center;font-size:15px;font-weight:700}
+.vazio{text-align:center;color:var(--cinza);padding:60px 20px}
+
+.barra-pedido{position:fixed;left:0;right:0;bottom:0;z-index:45;
+  padding:11px 16px calc(11px + env(safe-area-inset-bottom));
+  background:var(--branco);box-shadow:0 -2px 12px rgba(20,30,50,.09)}
+.barra-pedido.estourou{background:#FDECEC}
+.pedido-int{max-width:720px;margin:0 auto}
+.trilho{height:6px;background:#DDE3EC;border-radius:3px;overflow:hidden;margin-bottom:8px}
+.trilho i{display:block;height:100%;background:var(--verde);border-radius:3px;transition:width .25s}
+.barra-pedido.estourou .trilho{background:#F3CFCF}
+.barra-pedido.estourou .trilho i{background:var(--vermelho)}
+.saldo-linha{display:flex;font-size:13px;color:var(--cinza);gap:10px}
+.saldo-linha b{color:var(--texto);font-weight:600}
+.saldo-linha .direita{margin-left:auto;font-weight:600;color:var(--verde);white-space:nowrap}
+.barra-pedido.estourou .saldo-linha .direita{color:var(--vermelho)}
+.aviso-pagar{background:var(--vermelho);color:#fff;border-radius:8px;padding:9px 12px;
+  font-size:13px;margin-top:9px;line-height:1.45}
+.aviso-pagar b{font-weight:700}
+.pedido-baixo{display:flex;align-items:center;gap:14px;margin-top:10px}
+.resumo small{display:block;font-size:12px;color:var(--cinza)}
+.resumo strong{font-size:19px;font-weight:700;color:var(--verde)}
+.resumo.estourou strong{color:var(--vermelho)}
+.ver{margin-left:auto;background:var(--azul);color:var(--branco);border-radius:11px;
+  padding:13px 24px;font-size:15px;font-weight:600}
+.ver:disabled{background:var(--linha);color:var(--cinza)}
+
+.fundo-modal{position:fixed;inset:0;background:rgba(27,32,39,.5);z-index:60;opacity:0;pointer-events:none;transition:opacity .2s}
+.fundo-modal.aberto{opacity:1;pointer-events:auto}
+.painel{position:fixed;top:0;right:0;bottom:0;width:min(460px,100%);background:var(--fundo);z-index:70;
+  transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
+.painel.aberto{transform:none}
+@media(prefers-reduced-motion:reduce){.painel,.barra-pedido,.trilho i{transition:none}}
+.painel-topo{display:flex;align-items:center;gap:12px;padding:16px;background:var(--branco);box-shadow:0 1px 0 var(--linha)}
+.painel-topo h2{font-size:17px;font-weight:600;flex:1}
+.fechar{font-size:25px;line-height:1;color:var(--cinza)}
+.painel-corpo{flex:1;overflow-y:auto;padding:16px}
+.painel-pe{padding:16px;background:var(--branco);box-shadow:0 -1px 0 var(--linha)}
+.carrinho-item{display:flex;gap:11px;background:var(--branco);border-radius:11px;padding:11px;margin-bottom:8px;align-items:center}
+.carrinho-item .mini{width:46px;height:56px;flex-shrink:0;border-radius:7px;background:var(--fundo);
+  overflow:hidden;padding:3px}
+.carrinho-item .mini img{width:100%;height:100%;object-fit:contain}
+.carrinho-item h4{font-size:14px;font-weight:600}
+.carrinho-item .meta{font-size:12.5px;color:var(--cinza);margin-top:2px}
+.carrinho-item .val{margin-left:auto;text-align:right;font-weight:700;font-size:14.5px}
+.remover{color:var(--vermelho);font-size:12px;margin-top:4px;font-weight:500}
+
+.sub{display:flex;font-size:13px;color:var(--cinza);margin-bottom:5px}
+.sub span{margin-left:auto}
+.total{display:flex;align-items:baseline;gap:10px;font-size:15px;font-weight:600;
+  padding-top:9px;margin-top:7px;border-top:1px solid var(--linha)}
+.total strong{margin-left:auto;font-size:25px;font-weight:800;color:var(--verde)}
+.total.estourou strong{color:var(--vermelho)}
+.quadro{background:var(--branco);border-radius:11px;padding:13px 14px;margin-bottom:14px}
+.quadro.alerta{background:#FDECEC}
+.principal{width:100%;background:var(--azul);color:var(--branco);border-radius:11px;padding:15px;font-size:16px;font-weight:600}
+.principal:disabled{background:var(--linha);color:var(--cinza)}
+.secundario{width:100%;border:1px solid var(--linha);background:var(--branco);color:var(--texto);
+  border-radius:11px;padding:12px;font-size:14px;font-weight:500;margin-top:9px}
+label{display:block;font-size:12.5px;font-weight:600;margin-bottom:6px;color:var(--cinza)}
+input,textarea{width:100%;border:1px solid var(--linha);border-radius:9px;padding:12px;
+  font-family:inherit;font-size:16px;background:var(--branco);color:var(--texto)}
+textarea{resize:vertical;min-height:64px}
+select{width:100%;border:1px solid var(--linha);border-radius:9px;padding:12px;
+  font-family:inherit;font-size:15px;background:var(--branco);color:var(--texto);
+  appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2377818E' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+  background-repeat:no-repeat;background-position:right 12px center;background-size:18px;padding-right:40px}
+.campo{margin-bottom:14px}
+.pagamentos{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.forma{position:relative;border:1.5px solid var(--linha);background:var(--branco);color:var(--texto);
+  border-radius:10px;padding:14px 10px;font-size:14px;font-weight:600;line-height:1.25;
+  transition:background .15s,border-color .15s,color .15s}
+.forma[aria-pressed="true"]{border-color:var(--azul);background:var(--azul);color:#fff}
+.forma[aria-pressed="true"]::after{content:"✓";position:absolute;top:5px;right:8px;
+  font-size:12px;font-weight:700;opacity:.9}
+.previa{background:#F0F2F5;border-radius:9px;padding:11px 13px;font-family:ui-monospace,Menlo,monospace;
+  font-size:11.5px;line-height:1.75;color:#4A5563;white-space:pre-wrap;word-break:break-word}
+.rotulo-previa{font-size:12px;color:var(--cinza);margin:16px 0 6px}
+.aviso{background:#FCEBEC;color:var(--vermelho);border-radius:9px;padding:11px;font-size:13.5px;margin-bottom:13px;font-weight:500}
+.nota{font-size:12.5px;color:var(--cinza);margin-top:11px;line-height:1.5}
+.ok{text-align:center;padding:20px 0}
+.selo{width:60px;height:60px;border-radius:50%;background:var(--verde);color:var(--branco);
+  display:grid;place-items:center;font-size:30px;margin:0 auto 16px}
+.ok h2{font-size:19px;font-weight:600}
+
+.entrada{position:fixed;inset:0;z-index:90;background:var(--branco);display:none;
+  overflow-y:auto;padding:0 20px}
+.entrada.aberta{display:block}
+.entrada-int{max-width:380px;margin:0 auto;padding:52px 0 40px}
+.entrada .marca{height:54px;margin:0 auto 26px}
+.entrada h1{font-size:20px;font-weight:700;text-align:center;margin-bottom:6px}
+.entrada .sub-t{font-size:13.5px;color:var(--cinza);text-align:center;margin-bottom:28px;line-height:1.5}
+.grupo-mes{margin-bottom:20px}
+.grupo-mes h3{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--cinza);margin-bottom:9px}
+.hist{width:100%;display:flex;align-items:center;gap:12px;background:var(--branco);
+  border-radius:11px;padding:13px;margin-bottom:8px;text-align:left}
+.hist b{font-size:14px;font-weight:600}
+.hist small{display:block;font-size:12.5px;color:var(--cinza);margin-top:2px}
+.hist .valor{margin-left:auto;font-size:15px;font-weight:700}
+.quem{font-size:15px;font-weight:600;text-align:center;margin-bottom:20px;
+  padding-bottom:16px;border-bottom:1px solid var(--linha)}
+.senha-campo{position:relative}
+.senha-campo input{padding-right:44px}
+.olho{position:absolute;right:6px;top:6px;width:34px;height:34px;border-radius:8px;font-size:15px;opacity:.5}
+
+.visor{position:fixed;inset:0;z-index:95;background:rgba(15,19,24,.93);display:none;flex-direction:column}
+.visor.aberto{display:flex}
+.visor-topo{display:flex;justify-content:flex-end;padding:12px 14px}
+.visor-fechar{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;
+  font-size:24px;display:grid;place-items:center}
+.visor-img{flex:1;display:grid;place-items:center;padding:0 20px;min-height:0}
+.visor-img img{max-width:100%;max-height:100%;object-fit:contain}
+.visor-pe{background:var(--branco);border-radius:20px 20px 0 0;padding:18px 18px 22px}
+.visor-pe h3{font-size:17px;font-weight:700}
+.visor-linha{display:flex;align-items:flex-end;gap:12px;margin-top:14px}
+.visor-linha .acao{margin-left:auto}
+.visor-linha .mais-btn{width:auto;padding:0 20px;height:44px;font-size:15px;font-weight:600}
+.visor-linha .stepper button{width:44px;height:44px}
+.admin{position:fixed;inset:0;z-index:75;background:var(--fundo);display:none}
+.admin.aberta{display:flex}
+
+.lateral{width:238px;flex-shrink:0;background:#12336F;color:#fff;display:flex;flex-direction:column;
+  transition:width .2s;z-index:2}
+.lateral-topo{display:flex;align-items:center;gap:10px;padding:18px 14px 16px}
+.lateral-marca{height:42px;width:auto;display:block;
+  filter:drop-shadow(0 1px 3px rgba(0,0,0,.28))}
+.lateral-recolher{margin-left:auto;width:34px;height:34px;border-radius:8px;display:grid;
+  place-items:center;color:#fff;background:rgba(255,255,255,.1);flex-shrink:0}
+.lateral-recolher svg,.hamburguer svg{width:19px;height:19px;fill:none;stroke:currentColor;
+  stroke-width:2;stroke-linecap:round}
+.lateral-itens{flex:1;padding:8px;overflow-y:auto}
+.lateral-pe{padding:8px;border-top:1px solid rgba(255,255,255,.12)}
+.lateral-item{display:flex;align-items:center;gap:12px;width:100%;padding:11px 12px;
+  border-radius:9px;color:rgba(255,255,255,.78);font-size:14px;font-weight:500;text-align:left;
+  margin-bottom:2px}
+.lateral-item svg{width:19px;height:19px;flex-shrink:0;fill:none;stroke:currentColor;
+  stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.lateral-item:hover{background:rgba(255,255,255,.09);color:#fff}
+.lateral-item[aria-current="page"]{background:#fff;color:var(--azul);font-weight:600}
+.lateral-fundo{display:none}
+
+.admin.recolhida .lateral{width:76px}
+.admin.recolhida .lateral-item span{display:none}
+/* recolhido: logo em cima, botão embaixo */
+.admin.recolhida .lateral-topo{flex-direction:column;gap:12px;padding:16px 8px 14px}
+.admin.recolhida .lateral-marca{height:auto;width:58px}
+.admin.recolhida .lateral-recolher{margin:0}
+.admin.recolhida .lateral-item{justify-content:center;padding:11px 0}
+
+.admin-lado{flex:1;display:flex;flex-direction:column;min-width:0}
+.admin-barra{display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--branco);
+  border-bottom:1px solid var(--linha);flex-shrink:0}
+.admin-barra h1{font-size:17px;font-weight:700;flex:1;letter-spacing:-.01em}
+.admin-quem{font-size:13px;color:var(--cinza)}
+.hamburguer{display:none;width:36px;height:36px;border-radius:9px;border:1px solid var(--linha);
+  place-items:center;color:var(--texto);flex-shrink:0}
+.admin-corpo{flex:1;overflow-y:auto;padding:22px 20px 44px}
+.admin-int{max-width:920px;margin:0 auto}
+.admin-cab{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.admin-cab h2{font-size:19px;font-weight:700;margin-right:auto;letter-spacing:-.01em}
+.btn{background:var(--branco);border:1px solid var(--linha);color:var(--texto);border-radius:9px;
+  padding:10px 16px;font-size:13.5px;font-weight:600;white-space:nowrap}
+.btn:hover{border-color:#C9D2DD;background:#FBFCFD}
+.btn.azul{background:var(--azul);border-color:var(--azul);color:#fff}
+.btn.perigo{color:var(--vermelho);border-color:#F3CFCF}
+.filtro-linha{display:flex;gap:10px;margin-bottom:14px}
+.filtro-linha input{flex:1;padding:11px 13px;font-size:14.5px;min-width:0}
+.filtro-linha select{width:auto;min-width:168px;padding:11px 40px 11px 13px;font-size:14.5px}
+
+@media(max-width:860px){
+  .hamburguer{display:grid}
+  .lateral{position:fixed;top:0;bottom:0;left:0;transform:translateX(-100%);
+    transition:transform .22s;box-shadow:0 0 40px rgba(0,0,0,.3)}
+  .admin.menu-aberto .lateral{transform:none}
+  .admin.menu-aberto .lateral-fundo{display:block;position:fixed;inset:0;background:rgba(15,22,35,.5);z-index:1}
+  .admin.recolhida .lateral{width:238px}
+  .admin.recolhida .lateral-topo{flex-direction:row;gap:10px;padding:20px 16px 18px}
+  .admin.recolhida .lateral-marca{height:46px;width:auto}
+  .admin.recolhida .lateral-recolher{margin-left:auto}
+  .admin.recolhida .lateral-item span{display:block}
+  .admin.recolhida .lateral-item{justify-content:flex-start;padding:11px 12px}
+  .admin-corpo{padding:16px 14px 40px}
+  .admin-barra{padding:11px 14px}
+  .admin-cab h2{width:100%;margin-bottom:2px}
+  .admin-cab .btn{flex:1}
+  .filtro-linha{flex-wrap:wrap}
+  .filtro-linha select{width:100%;min-width:0}
+}
+.tabela{background:var(--branco);border-radius:14px;overflow:hidden;border:1px solid var(--linha)}
+.linha{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid #F0F2F5}
+.linha:last-child{border-bottom:0}
+.linha.inativa{opacity:.5}
+.thumb{width:44px;height:52px;flex-shrink:0;border-radius:8px;background:var(--fundo);
+  overflow:hidden;padding:3px;display:grid;place-items:center}
+.thumb img{width:100%;height:100%;object-fit:contain;display:block}
+.thumb span{font-size:9.5px;color:#A3ABB6;text-align:center;line-height:1.3}
+.info{flex:1;min-width:0}
+.info b{display:block;font-size:14px;font-weight:600;line-height:1.35}
+.valor{font-size:14.5px;font-weight:700;text-align:right;white-space:nowrap}
+.valor small{display:block;font-size:11.5px;font-weight:500;color:var(--cinza)}
+.resumo-topo{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px}
+.cartao-num{background:var(--branco);border:1px solid var(--linha);border-radius:12px;padding:14px 16px}
+.cartao-num small{display:block;font-size:12px;color:#8A94A2;margin-bottom:5px}
+.cartao-num b{font-size:22px;font-weight:700;letter-spacing:-.01em}
+.cartao-num b.verde{color:var(--verde)}
+.cartao-num b.vermelho{color:var(--vermelho)}
+.em-breve{background:var(--branco);border-radius:12px;padding:34px 20px;text-align:center;color:var(--cinza)}
+.opcao-import{display:flex;gap:10px;align-items:flex-start;margin-bottom:14px;
+  background:var(--amarelo-fraco);border:1px solid #F1DFB8;border-radius:11px;padding:12px 14px;
+  font-size:13.5px;color:#7A6321;cursor:pointer}
+.opcao-import input{width:18px;height:18px;margin-top:1px;flex-shrink:0;accent-color:var(--azul)}
+.opcao-import small{display:block;font-size:12.5px;opacity:.85;margin-top:2px}
+.previa-tabela{background:var(--branco);border:1px solid var(--linha);border-radius:12px;
+  padding:4px 0;margin:12px 0;max-height:280px;overflow-y:auto}
+.previa-linha{display:flex;gap:10px;padding:9px 14px;font-size:13px;align-items:center;flex-wrap:wrap}
+.previa-linha + .previa-linha{border-top:1px solid #F0F2F5}
+.marca-tipo{font-size:11px;font-weight:700;border-radius:5px;padding:2px 8px;white-space:nowrap}
+.t-novo{background:#E4F1FC;color:#0C447C}
+.t-alterado{background:#FFF3DC;color:#8A6100}
+.t-igual{background:#EFF1F4;color:#77818E}
+.t-inativo,.t-erro{background:#FCEBEC;color:#A32D2D}
+.previa-linha .depois{margin-left:auto;font-weight:600;white-space:nowrap}
+.cab-tabela{display:grid;gap:12px;padding:11px 16px;background:#FAFBFC;
+  font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#8A94A2;
+  border-bottom:1px solid var(--linha)}
+.produtos-grid{grid-template-columns:56px 1fr 112px 92px 40px}
+.colab-grid{grid-template-columns:1fr 152px 104px 92px 40px}
+.premio-grid{grid-template-columns:1fr 152px 136px}
+.pedidos-grid{grid-template-columns:1fr 104px 104px 104px 116px 40px}
+.linha[class*="-grid"]{display:grid;align-items:center;gap:12px}
+@media(max-width:760px){
+  .cab-tabela{display:none}
+  .linha[class*="-grid"]{display:flex;flex-wrap:wrap;gap:9px}
+  .linha .info{flex:1 1 100%}
+}
+.mono{font-size:13.5px;color:var(--cinza);font-variant-numeric:tabular-nums}
+.info small{display:block;font-size:12px;color:var(--cinza);margin-top:2px}
+.selo-status{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;
+  border-radius:999px;padding:4px 11px}
+.selo-status::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.s-ativo{background:var(--verde-fraco);color:var(--verde)}
+.s-inativo{background:#EFF1F4;color:#8A94A2}
+.s-pendente{background:#FFF4E0;color:var(--amarelo)}
+.selo-status.clicavel{cursor:pointer;border:1px solid transparent}
+.selo-status.clicavel:hover{border-color:currentColor}
+.valor.zerado{color:#A3ABB6}
+.valor.vermelho{color:var(--vermelho)}
+
+.mini-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--linha);
+  background:var(--branco);display:grid;place-items:center;color:#8A94A2;padding:0}
+.mini-btn:hover{background:#F4F6F9;color:var(--texto);border-color:#D6DCE4}
+.mini-btn svg{width:16px;height:16px;fill:currentColor}
+
+/* ficha lateral */
+.ficha{position:fixed;inset:0;z-index:88;background:rgba(20,26,35,.55);display:none;
+  align-items:flex-end;justify-content:center;padding:0}
+.ficha.aberta{display:flex}
+.ficha-caixa{background:var(--branco);width:min(560px,100%);max-height:94vh;
+  border-radius:20px 20px 0 0;display:flex;flex-direction:column;overflow:hidden}
+@media(min-width:640px){
+  .ficha{align-items:center;padding:24px}
+  .ficha-caixa{border-radius:16px;max-height:88vh}
+}
+.ficha-topo{display:flex;align-items:center;gap:10px;padding:18px 20px 16px;
+  border-bottom:1px solid var(--linha);flex-shrink:0}
+.ficha-topo h3{font-size:17px;font-weight:700;flex:1}
+.ficha-corpo{flex:1;overflow-y:auto;padding:20px;background:var(--fundo)}
+.ficha-pe{display:flex;gap:10px;padding:16px 20px;border-top:1px solid var(--linha);flex-shrink:0}
+.ficha-corpo .campo{margin-bottom:16px}
+.ficha-corpo label{font-size:12px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;
+  color:#8A94A2;margin-bottom:7px}
+.ficha-corpo input,.ficha-corpo select,.ficha-corpo textarea{font-size:15px;padding:11px 13px}
+.bloco{background:var(--branco);border:1px solid var(--linha);border-radius:12px;
+  padding:16px;margin-bottom:16px}
+.bloco-titulo{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  color:#8A94A2;margin-bottom:13px}
+.foto-linha{display:flex;gap:16px;align-items:center}
+.foto-quadro{width:92px;height:110px;flex-shrink:0;border-radius:10px;background:var(--fundo);
+  border:1px solid var(--linha);overflow:hidden;padding:7px;display:grid;place-items:center}
+.foto-quadro img{width:100%;height:100%;object-fit:contain;display:block}
+.foto-quadro span{font-size:11px;color:#A3ABB6;text-align:center;line-height:1.4}
+.foto-acoes{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.dupla{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:520px){.dupla{grid-template-columns:1fr;gap:0}}
+
+/* opções em cartão para o status */
+.opcoes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opcao{border:1.5px solid var(--linha);background:var(--branco);border-radius:11px;
+  padding:12px 13px;text-align:left;line-height:1.35}
+.opcao b{display:block;font-size:14px;font-weight:600;margin-bottom:2px}
+.opcao small{font-size:12px;color:var(--cinza)}
+.opcao[aria-pressed="true"]{border-color:var(--azul);background:var(--azul-fraco)}
+.opcao[aria-pressed="true"] b{color:var(--azul)}
+
+#seloDemo{position:fixed;left:50%;transform:translateX(-50%);bottom:118px;z-index:80;
+  background:rgba(43,52,65,.92);color:#fff;font-size:11.5px;border-radius:999px;padding:6px 14px;
+  pointer-events:none;box-shadow:0 3px 10px rgba(0,0,0,.18)}
+/* na área administrativa não existe barra de pedido: desce o selo pro rodapé */
+.admin.aberta ~ #seloDemo{bottom:calc(10px + env(safe-area-inset-bottom))}
+
+/* ======================================================================
+   AJUSTES DE LAYOUT NO CELULAR
+   ====================================================================== */
+@media(max-width:860px){
+  .lateral-marca{height:46px}
+  .lateral-topo{padding:20px 16px 18px}
+}
+
+@media(max-width:760px){
+  .admin-corpo{padding:14px 12px 46px}
+  .admin-barra{padding:10px 12px}
+  .admin-barra h1{font-size:16px}
+  .admin-quem{font-size:12.5px;white-space:nowrap}
+
+  .admin-cab{gap:8px;margin-bottom:14px}
+  .admin-cab h2{font-size:18px;margin-bottom:4px}
+  .admin-cab .btn{padding:11px 12px;font-size:13px}
+
+  /* cartões de números: mesma altura, sem sobra */
+  .resumo-topo{grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
+  .cartao-num{padding:11px 13px;min-height:76px;display:flex;flex-direction:column;
+    justify-content:space-between;border-radius:13px}
+  .cartao-num small{font-size:11.5px;line-height:1.3;margin-bottom:0}
+  .cartao-num b{font-size:20px}
+
+  .filtro-linha{gap:8px;margin-bottom:12px}
+  .filtro-linha input,.filtro-linha select{padding:11px 12px;font-size:15px}
+  .filtro-linha select{padding-right:38px}
+
+  .tabela{border-radius:13px}
+  .linha{padding:12px 13px}
+  .mini-btn{width:34px;height:34px}
+  .selo-status{padding:4px 10px;font-size:11.5px}
+  .mono{font-size:13px}
+  .valor{font-size:14.5px}
+
+  /* base comum das linhas em grade */
+  .linha[class*="-grid"]{display:grid;align-items:center;column-gap:10px;row-gap:7px}
+  .linha[class*="-grid"] .info{flex:none}
+  .linha[class*="-grid"] .info b{font-size:14.5px}
+
+  /* ---------- PRODUTOS: foto | nome + menu / preço + status ---------- */
+  .linha.produtos-grid{grid-template-columns:64px minmax(0,1fr) auto}
+  .linha.produtos-grid > :nth-child(1){grid-area:1/1/3/2}
+  .linha.produtos-grid > :nth-child(2){grid-area:1/2/2/3}
+  .linha.produtos-grid > :nth-child(5){grid-area:1/3/2/4;justify-self:end}
+  .linha.produtos-grid > :nth-child(3){grid-area:2/2/3/3;text-align:left}
+  .linha.produtos-grid > :nth-child(4){grid-area:2/3/3/4;justify-self:end}
+  .linha.produtos-grid .thumb{width:64px;height:76px;border-radius:10px}
+  .linha.produtos-grid .valor small{display:inline;margin-left:5px}
+
+  /* ---------- COLABORADORES: nome + menu / CPF / selos ---------- */
+  .linha.colab-grid{grid-template-columns:minmax(0,1fr) auto auto}
+  .linha.colab-grid > :nth-child(1){grid-area:1/1/2/3}
+  .linha.colab-grid > :nth-child(5){grid-area:1/3/2/4;justify-self:end}
+  .linha.colab-grid > :nth-child(2){grid-area:2/1/3/4}
+  .linha.colab-grid > :nth-child(3){grid-area:3/1/4/2;justify-self:start}
+  .linha.colab-grid > :nth-child(4){grid-area:3/2/4/3;justify-self:start}
+
+  /* ---------- PRÊMIO: nome / CPF + valor ---------- */
+  .linha.premio-grid{grid-template-columns:minmax(0,1fr) auto}
+  .linha.premio-grid > :nth-child(1){grid-area:1/1/2/3}
+  .linha.premio-grid > :nth-child(2){grid-area:2/1/3/2}
+  .linha.premio-grid > :nth-child(3){grid-area:2/2/3/3}
+
+  /* ---------- PEDIDOS: nome + menu / data + totais / Tiny ---------- */
+  .linha.pedidos-grid{grid-template-columns:minmax(0,1fr) auto auto}
+  .linha.pedidos-grid > :nth-child(1){grid-area:1/1/2/3}
+  .linha.pedidos-grid > :nth-child(6){grid-area:1/3/2/4;justify-self:end}
+  .linha.pedidos-grid > :nth-child(2){grid-area:2/1/3/2}
+  .linha.pedidos-grid > :nth-child(3){grid-area:2/2/3/3}
+  .linha.pedidos-grid > :nth-child(4){grid-area:2/3/3/4}
+  .linha.pedidos-grid > :nth-child(5){grid-area:3/1/4/4;justify-self:start}
+  .linha.pedidos-grid > :nth-child(3)::before{content:"Total ";font-weight:500;color:var(--cinza)}
+  .linha.pedidos-grid > :nth-child(4)::before{content:"A pagar ";font-weight:500;color:var(--cinza)}
+
+  /* prévia de importação mais legível */
+  .previa-linha{gap:8px;padding:10px 13px}
+  .previa-linha .depois{width:100%;margin-left:0;text-align:right}
+}
+
+/* telas bem estreitas */
+@media(max-width:360px){
+  .resumo-topo{grid-template-columns:1fr}
+  .cartao-num{min-height:0;flex-direction:row;align-items:center;justify-content:space-between}
+  .cartao-num b{font-size:19px}
+  .linha.produtos-grid{grid-template-columns:56px minmax(0,1fr) auto}
+  .linha.produtos-grid .thumb{width:56px;height:68px}
+}
+</style>
+</head>
+<body>
+
+<div class="entrada aberta" id="entrada">
+  <div class="entrada-int">
+    <img class="marca" src="" data-logo alt="Atrius">
+    <h1>Prêmio Cesta de Limpeza</h1>
+    <p class="sub-t" id="entradaCompetencia"></p>
+    <div id="erroEntrada"></div>
+    <div id="entradaCorpo"></div>
+  </div>
+</div>
+
+<header>
+  <div class="wrap">
+    <div class="barra">
+      <img class="marca" src="" data-logo alt="Atrius">
+      <div class="saudacao" id="ola"></div>
+      <div class="programa" id="programa"></div>
+      <button class="sair-topo" id="btnMeus" onclick="abrir('meus')">Meus pedidos</button>
+      <button class="sair-topo" id="btnAdmin" onclick="abrirAdmin()" hidden>Administração</button>
+      <button class="sair-topo" onclick="sair()">Sair</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="busca">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <input id="busca" type="search" placeholder="Buscar produto" oninput="desenhar()" aria-label="Buscar produto">
+  </div>
+  <div class="abas" id="abas"></div>
+</div>
+
+<main class="wrap" id="conteudo"></main>
+
+<div class="barra-pedido" id="barraPedido">
+  <div class="pedido-int">
+    <div class="trilho"><i id="barra" style="width:0%"></i></div>
+    <div class="saldo-linha" id="saldoLinha">
+      <span id="saldoNormal">Pedido <b id="usado">R$ 0,00</b> de <b id="limite">R$ 0,00</b></span>
+      <span id="saldoZero" hidden>
+        <span class="selo-sem">Sem prêmio este mês</span>
+      </span>
+      <span class="direita" id="restante"></span>
+    </div>
+    <div class="aviso-pagar" id="avisoPagar" hidden></div>
+    <div class="pedido-baixo">
+      <div class="resumo" id="resumoRodape">
+        <small id="contagem">0 itens</small>
+        <strong id="totalRodape">R$ 0,00</strong>
+      </div>
+      <button class="ver" id="btnVer" onclick="abrir('carrinho')" disabled>Ver pedido</button>
+    </div>
+  </div>
+</div>
+
+<div class="fundo-modal" id="fundoModal" onclick="fecharTudo()"></div>
+
+<aside class="painel" id="painel" role="dialog" aria-modal="true" aria-labelledby="tituloPainel">
+  <div class="painel-topo">
+    <h2 id="tituloPainel">Seu pedido</h2>
+    <button class="fechar" onclick="fecharTudo()" aria-label="Fechar">&times;</button>
+  </div>
+  <div class="painel-corpo" id="painelCorpo"></div>
+  <div class="painel-pe" id="painelPe"></div>
+</aside>
+
+<div class="admin" id="admin">
+  <div class="lateral-fundo" id="lateralFundo" onclick="fecharLateral()"></div>
+
+  <nav class="lateral" id="lateral">
+    <div class="lateral-topo">
+      <img src="" data-logo alt="Atrius" class="lateral-marca">
+      <button class="lateral-recolher" onclick="recolherLateral()" aria-label="Recolher menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+    <div class="lateral-itens" id="lateralItens"></div>
+    <div class="lateral-pe">
+      <button class="lateral-item" onclick="verComoColaborador()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+        <span>Ver como colaborador</span></button>
+      <button class="lateral-item" onclick="sair()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        <span>Sair</span></button>
+    </div>
+  </nav>
+
+  <div class="admin-lado">
+    <div class="admin-barra">
+      <button class="hamburguer" onclick="abrirLateral()" aria-label="Abrir menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <h1 id="adminTituloTopo">Administração</h1>
+      <span class="admin-quem" id="adminOla"></span>
+    </div>
+    <div class="admin-corpo"><div class="admin-int" id="adminCorpo"></div></div>
+  </div>
+</div>
+
+<div class="ficha" id="ficha" role="dialog" aria-modal="true">
+  <div class="ficha-caixa">
+    <div class="ficha-topo"><h3 id="fichaTitulo"></h3>
+      <button class="fechar" onclick="fecharFicha()" aria-label="Fechar">&times;</button></div>
+    <div class="ficha-corpo" id="fichaCorpo"></div>
+    <div class="ficha-pe" id="fichaPe"></div>
+  </div>
+</div>
+
+<input type="file" id="arqImport" accept=".xlsx,.xls" hidden onchange="lerPlanilha(this)">
+<input type="file" id="arqFoto" accept="image/*" hidden onchange="trocarFoto(this)">
+
+<div class="visor" id="visor" role="dialog" aria-modal="true">
+  <div class="visor-topo"><button class="visor-fechar" onclick="fecharVisor()" aria-label="Fechar">&times;</button></div>
+  <div class="visor-img" id="visorImg" onclick="fecharVisor()"></div>
+  <div class="visor-pe" id="visorPe"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ====== CONFIGURAÇÃO DO SUPABASE ====== */
+const SUPABASE_URL  = 'https://hybrtpomhhxsnyownabv.supabase.co';
+const SUPABASE_KEY  = 'sb_publishable_1tSIP4JZBu1GkJWArnT6qA_w9aWeED4';
+const DOMINIO_LOGIN = 'premio.atrius.local';
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const emailDe = cpf => `${cpf}@${DOMINIO_LOGIN}`;
+const urlFoto = n => n ? `${SUPABASE_URL}/storage/v1/object/public/produtos/${n}` : '';
+const compAtual = () => `${COMPETENCIA.ano}-${String(COMPETENCIA.mes).padStart(2,'0')}`;
+const LOGO = 'data:image/png;base64,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';
+const PRODUTOS = [];
+const MESES = ['janeiro','fevereiro','março','abril','maio','junho',
+               'julho','agosto','setembro','outubro','novembro','dezembro'];
+
+/* A competência é sempre o mês corrente. O banco usa a mesma regra ao gravar
+   o pedido, então as duas pontas nunca discordam. */
+const COMPETENCIA = (() => {
+  const [d, m, a] = new Intl.DateTimeFormat('pt-BR', {timeZone:'America/Sao_Paulo'})
+    .format(new Date()).split('/').map(Number);
+  return {mes: m, ano: a, rotulo: `${MESES[m-1].toUpperCase()} ${a}`};
+})();
+const MIN_SENHA = 6;
+const PAGAMENTOS = ['Dinheiro','Pix','Cartão de crédito','Cartão de débito'];
+
+const COLABORADORES = [];
+const PEDIDOS = [];
+
+const estado = {carrinho:{}, linha:'todas', etapa:'carrinho', colaborador:null,
+                ampliado:null, obs:'', pedido:null,
+                entrada:{passo:'cpf', cpf:'', nome:''}, pagamento:null, vendo:null};
+
+const brl = c => (c/100).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const el = id => document.getElementById(id);
+const esc = t => String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const digitos = t => String(t||'').replace(/\D/g,'');
+const formatarCpf = c => {
+  const d = digitos(c);
+  return d.length === 11 ? `${d.slice(0,3)}.${d.slice(3,6)}.${d.slice(6,9)}-${d.slice(9)}` : String(c||'');
+};
+const SEM_FOTO = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/></svg>';
+
+sb.auth.getSession().then(({data}) => { if(data.session) iniciarSessao(); });
+document.querySelectorAll('[data-logo]').forEach(i => i.src = LOGO);
+document.querySelectorAll('[data-logo-icone]').forEach(i => i.href = LOGO);
+el('entradaCompetencia').textContent = 'Competência ' + COMPETENCIA.rotulo.toLowerCase();
+pintarEntrada();
+
+function mascaraCpf(campo){
+  const d = digitos(campo.value).slice(0,11);
+  let saida = d;
+  if(d.length > 9)      saida = `${d.slice(0,3)}.${d.slice(3,6)}.${d.slice(6,9)}-${d.slice(9)}`;
+  else if(d.length > 6) saida = `${d.slice(0,3)}.${d.slice(3,6)}.${d.slice(6)}`;
+  else if(d.length > 3) saida = `${d.slice(0,3)}.${d.slice(3)}`;
+  campo.value = saida;
+  if(estado.entrada) estado.entrada.cpf = d;
+}
+
+function verSenha(id){
+  const c = el(id);
+  c.type = c.type === 'password' ? 'text' : 'password';
+}
+
+function campoSenha(id, rotulo, acao, dica){
+  return `<div class="campo"><label for="${id}">${rotulo}</label>
+    <div class="senha-campo">
+      <input id="${id}" type="password" placeholder="${dica||''}"
+             autocomplete="${acao==='entrar'?'current-password':'new-password'}"
+             onkeydown="if(event.key==='Enter')${acao}()">
+      <button type="button" class="olho" onclick="verSenha('${id}')" aria-label="Mostrar senha">&#128065;</button>
+    </div></div>`;
+}
+
+function pintarEntrada(){
+  const e = estado.entrada;
+  const corpo = el('entradaCorpo');
+
+  if(e.passo === 'cpf'){
+    corpo.innerHTML = `
+      <div class="campo"><label for="cpf">CPF</label>
+        <input id="cpf" inputmode="numeric" maxlength="14" placeholder="000.000.000-00"
+               autocomplete="username" value="${e.cpf?formatarCpf(e.cpf):''}"
+               oninput="mascaraCpf(this)" onkeydown="if(event.key==='Enter')conferirCpf()"></div>
+      <button class="principal" id="btnCpf" onclick="conferirCpf()">Continuar</button>
+      <p class="nota" style="text-align:center">Use seu CPF para acessar.</p>`;
+    setTimeout(()=>el('cpf') && el('cpf').focus(), 60);
+  }
+
+  if(e.passo === 'senha'){
+    corpo.innerHTML = `
+      <p class="quem">${esc(e.nome)}</p>
+      ${campoSenha('senha','Senha','entrar','Sua senha de acesso')}
+      <button class="principal" id="btnEntrar" onclick="entrar()">Entrar</button>
+      <button class="secundario" onclick="voltarCpf()">Não sou eu</button>`;
+    setTimeout(()=>el('senha') && el('senha').focus(), 60);
+  }
+
+  if(e.passo === 'criar'){
+    corpo.innerHTML = `
+      <p class="quem">${esc(e.nome)}</p>
+      <div class="quadro" style="background:var(--azul-fraco);margin-bottom:16px">
+        <b style="display:block;font-size:14px;margin-bottom:3px">Primeiro acesso</b>
+        <span style="font-size:13px;color:var(--cinza);line-height:1.5">
+        Crie uma senha só sua. Ela protege seu saldo e seus pedidos.</span>
+      </div>
+      ${campoSenha('nova','Nova senha','criarSenha', `Pelo menos ${MIN_SENHA} caracteres`)}
+      ${campoSenha('confirma','Repita a senha','criarSenha','Digite de novo')}
+      <button class="principal" id="btnCriar" onclick="criarSenha()">Criar senha e entrar</button>
+      <button class="secundario" onclick="voltarCpf()">Voltar</button>`;
+    setTimeout(()=>el('nova') && el('nova').focus(), 60);
+  }
+}
+
+function erroEntrada(m){ el('erroEntrada').innerHTML = m ? `<div class="aviso">${esc(m)}</div>` : ''; }
+function voltarCpf(){ estado.entrada = {passo:'cpf', cpf:estado.entrada.cpf, nome:''}; erroEntrada(''); pintarEntrada(); }
+
+/* ------------------------------------------------------- dados do Supabase */
+
+async function carregarDados(){
+  const [pr, co, sa] = await Promise.all([
+    sb.from('produtos').select('*').order('ordem'),
+    sb.from('colaboradores').select('*').order('nome'),
+    sb.from('saldos').select('*'),
+  ]);
+  if(pr.error) throw pr.error;
+
+  PRODUTOS.length = 0;
+  (pr.data || []).forEach(p => PRODUTOS.push({
+    ...p, ativo: p.ativo ? 1 : 0, foto: urlFoto(p.foto_url)
+  }));
+
+  COLABORADORES.length = 0;
+  (co.data || []).forEach(c => COLABORADORES.push({
+    ...c, ativo: c.ativo ? 1 : 0, saldo: 0, saldos: {}, tem_senha: false
+  }));
+
+  (sa.data || []).forEach(s => {
+    const c = COLABORADORES.find(x => x.cpf === s.cpf);
+    if(!c) return;
+    c.saldos[s.competencia] = s.valor;
+    if(s.competencia === compAtual()) c.saldo = s.valor;
+  });
+
+  const {data: comSenha} = await sb.rpc('cpfs_com_senha');
+  (comSenha || []).forEach(cpf => {
+    const c = COLABORADORES.find(x => x.cpf === cpf);
+    if(c) c.tem_senha = true;
+  });
+
+  await carregarPedidos();
+}
+
+async function carregarPedidos(){
+  const {data} = await sb.from('pedidos')
+    .select('*, pedido_itens(*)').order('criado_em', {ascending:false});
+  PEDIDOS.length = 0;
+  (data || []).forEach(p => PEDIDOS.push({
+    codigo: p.codigo, cpf: p.cpf,
+    nome: (COLABORADORES.find(c => c.cpf === p.cpf) || {}).nome || p.cpf,
+    competencia: p.competencia,
+    data: new Date(p.criado_em).toLocaleDateString('pt-BR'),
+    saldo: p.saldo, total: p.total, excedente: p.excedente,
+    pagamento: p.pagamento, obs: p.obs, tiny: p.tiny, tiny_erro: p.tiny_erro,
+    itens: (p.pedido_itens || []).map(i => ({
+      sku: i.sku, nome: i.nome, quantidade: i.quantidade, preco: i.preco
+    })),
+  }));
+}
+
+async function iniciarSessao(){
+  const u = (await sb.auth.getUser()).data.user;
+  if(!u) return;
+  const cpf = digitos(u.email.split('@')[0]);
+  try{ await carregarDados(); }
+  catch(e){ return erroEntrada('Não foi possível carregar os dados.'); }
+  const conta = COLABORADORES.find(c => c.cpf === cpf && c.ativo);
+  if(!conta){
+    await sb.auth.signOut();
+    return erroEntrada('Cadastro não encontrado ou inativo. Procure o RH.');
+  }
+  aposEntrar(conta);
+}
+
+async function conferirCpf(){
+  const cpf = digitos(el('cpf').value);
+  erroEntrada('');
+  if(cpf.length !== 11) return erroEntrada('CPF incompleto.');
+  const b = el('btnCpf'); b.disabled = true; b.textContent = 'Verificando...';
+
+  const {data, error} = await sb.rpc('checar_cpf', {p_cpf: cpf});
+  b.disabled = false; b.textContent = 'Continuar';
+
+  if(error){
+    console.error('checar_cpf', error);
+    return erroEntrada('Erro: ' + (error.message || error.hint || JSON.stringify(error)));
+  }
+  if(!data.existe) return erroEntrada('CPF não encontrado. Procure o RH.');
+  if(!data.ativo)  return erroEntrada('Seu acesso está inativo. Procure o RH.');
+
+  estado.entrada = {passo: data.tem_senha ? 'senha' : 'criar', cpf, nome: data.nome};
+  pintarEntrada();
+}
+
+async function entrar(){
+  const b = el('btnEntrar'); b.disabled = true; b.textContent = 'Entrando...';
+  erroEntrada('');
+  const {error} = await sb.auth.signInWithPassword({
+    email: emailDe(estado.entrada.cpf), password: el('senha').value});
+  if(error){
+    b.disabled = false; b.textContent = 'Entrar';
+    return erroEntrada('Senha incorreta.');
+  }
+  await iniciarSessao();
+}
+
+async function criarSenha(){
+  const b = el('btnCriar');
+  const nova = el('nova').value, confirma = el('confirma').value;
+  erroEntrada('');
+  if(nova.length < MIN_SENHA)
+    return erroEntrada(`A senha precisa de ao menos ${MIN_SENHA} caracteres.`);
+  if(nova !== confirma) return erroEntrada('As senhas não conferem.');
+
+  b.disabled = true; b.textContent = 'Criando...';
+  const email = emailDe(estado.entrada.cpf);
+  const {error} = await sb.auth.signUp({email, password: nova});
+  if(error){
+    b.disabled = false; b.textContent = 'Criar senha e entrar';
+    return erroEntrada('Não foi possível criar a senha: ' + error.message);
+  }
+  if(!(await sb.auth.getSession()).data.session)
+    await sb.auth.signInWithPassword({email, password: nova});
+  await iniciarSessao();
+}
+
+function aposEntrar(conta){
+  estado.colaborador = conta;
+  if(conta.admin){
+    el('entrada').classList.remove('aberta');
+    el('adminOla').textContent = primeiroNome(conta.nome);
+    abrirAdmin();
+  }
+  el('entrada').classList.remove('aberta');
+  el('ola').innerHTML = conta.saldo > 0
+    ? `Olá, <b>${esc(primeiroNome(conta.nome))}</b>, esse mês você tem
+       <span class="valor">${brl(conta.saldo)}</span>`
+    : `Olá, <b>${esc(primeiroNome(conta.nome))}</b>, você não tem prêmio este mês`;
+  el('btnAdmin').hidden = !conta.admin;
+
+  el('programa').textContent = 'Prêmio Cesta de Limpeza · ' + COMPETENCIA.rotulo;
+  abas(); desenhar(); atualizarSaldo();
+}
+
+function primeiroNome(n){
+  const p = String(n||'').trim().split(' ');
+  return p[0].charAt(0) + p[0].slice(1).toLowerCase();
+}
+
+async function sair(){
+  await sb.auth.signOut();
+  fecharAdmin();
+  estado.colaborador = null; estado.carrinho = {}; estado.obs = '';
+  estado.entrada = {passo:'cpf', cpf:'', nome:''};
+  erroEntrada(''); pintarEntrada();
+  fecharTudo(); atualizarSaldo();
+  el('entrada').classList.add('aberta');
+}
+
+function abas(){
+  const ordem = ['CASA','ROUPAS','COZINHA'];
+  const ativos = PRODUTOS.filter(p => p.ativo);
+  const tem = new Set(ativos.map(p=>p.linha));
+  const linhas = ['todas', ...ordem.filter(l=>tem.has(l))];
+  el('abas').innerHTML = linhas.map(l=>{
+    const n = l==='todas' ? ativos.length : ativos.filter(p=>p.linha===l).length;
+    return `<button class="aba" aria-pressed="${estado.linha===l}" onclick="filtrar('${esc(l)}')">${
+      l==='todas'?'Tudo':esc(l)}<em>${n}</em></button>`;
+  }).join('');
+}
+
+function filtrar(l){ estado.linha = l; abas(); desenhar(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+function cartao(p){
+  const qtd = estado.carrinho[p.sku]?.quantidade || 0;
+  return `
+  <article class="item">
+    ${p.foto
+      ? `<button class="foto" onclick="ampliar('${esc(p.sku)}')" aria-label="Ver foto de ${esc(p.nome)}">
+           <img src="${p.foto}" alt="" loading="lazy" decoding="async">
+           <span class="lupa"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5M11 8v6M8 11h6"/></svg></span>
+         </button>`
+      : `<div class="foto">${SEM_FOTO}</div>`}
+    <div class="dados">
+      <h3>${esc(p.nome)}</h3>
+      <div class="cod">${esc(p.sku)}</div>
+      <div class="rodape-item">
+        <div class="preco">${brl(p.preco)}<small>por unidade</small></div>
+        <div class="acao">${qtd
+          ? `<div class="stepper">
+               <button onclick="mudar('${esc(p.sku)}',-1)" aria-label="Diminuir">&minus;</button>
+               <b>${qtd}</b>
+               <button onclick="mudar('${esc(p.sku)}',1)" aria-label="Aumentar">+</button>
+             </div>`
+          : `<button class="mais-btn" onclick="mudar('${esc(p.sku)}',1)" aria-label="Adicionar ${esc(p.nome)}">+</button>`}
+        </div>
+      </div>
+    </div>
+  </article>`;
+}
+
+function desenhar(){
+  const termo = (el('busca').value||'').trim().toLowerCase();
+  const lista = PRODUTOS.filter(p => p.ativo &&
+    (estado.linha==='todas' || p.linha===estado.linha) &&
+    (!termo || (p.nome+' '+p.sku).toLowerCase().includes(termo)));
+
+  if(!lista.length){
+    el('conteudo').innerHTML = '<p class="vazio">Nenhum produto encontrado.</p>';
+    return;
+  }
+  if(estado.linha === 'todas' && !termo){
+    const ordem = ['CASA','ROUPAS','COZINHA'];
+    el('conteudo').innerHTML = ordem.filter(g => lista.some(p=>p.linha===g)).map(g=>`
+      <section class="grupo"><h2>${esc(g)}</h2></section>
+      <div class="lista">${lista.filter(p=>p.linha===g).map(cartao).join('')}</div>`).join('');
+  }else{
+    el('conteudo').innerHTML = `<div class="lista" style="padding-top:14px">${lista.map(cartao).join('')}</div>`;
+  }
+}
+
+function mudar(sku, delta){
+  const p = PRODUTOS.find(x=>x.sku===sku);
+  if(!p || !p.ativo) return;
+  const atual = estado.carrinho[sku]?.quantidade || 0;
+  const novo = Math.min(99, Math.max(0, atual+delta));
+  if(novo === 0) delete estado.carrinho[sku];
+  else estado.carrinho[sku] = {...p, quantidade:novo};
+  atualizarSaldo(); desenhar();
+  if(estado.ampliado) pintarVisor();
+  if(el('painel').classList.contains('aberto')) pintar();
+}
+
+const total = () => Object.values(estado.carrinho).reduce((s,i)=>s+i.preco*i.quantidade,0);
+const contar = () => Object.values(estado.carrinho).reduce((s,i)=>s+i.quantidade,0);
+
+function calcular(){
+  const t = total();
+  const limite = estado.colaborador ? estado.colaborador.saldo : 0;
+  const usado = Math.min(t, limite);
+  return {total:t, limite, usado, sobra: Math.max(0, limite-t), excedente: Math.max(0, t-limite)};
+}
+
+function atualizarSaldo(){
+  const c = calcular(), n = contar();
+  const semSaldo = c.limite === 0;
+
+  el('barraPedido').classList.toggle('sem-saldo', semSaldo);
+  el('saldoNormal').hidden = semSaldo;
+  el('saldoZero').hidden = !semSaldo || c.total > 0;
+  el('saldoLinha').hidden = semSaldo && c.total > 0;
+
+  el('usado').textContent = brl(c.total);
+  el('limite').textContent = brl(c.limite);
+  el('barra').style.width = (c.limite ? Math.min(100, c.total/c.limite*100) : (c.total?100:0)) + '%';
+
+  el('restante').textContent = semSaldo ? ''
+    : (c.excedente > 0 ? 'Passou ' + brl(c.excedente) : 'Ainda tem ' + brl(c.sobra));
+
+  const aviso = el('avisoPagar');
+  aviso.hidden = c.excedente === 0;
+  if(c.excedente > 0)
+    aviso.innerHTML = semSaldo
+      ? `Sem prêmio este mês: você pagará <b>${brl(c.total)}</b> por este pedido.`
+      : `Você pagará apenas a diferença de <b>${brl(c.excedente)}</b> por este pedido.`;
+
+  el('contagem').textContent = n === 1 ? '1 item' : n + ' itens';
+  el('totalRodape').textContent = brl(c.total);
+  el('resumoRodape').classList.toggle('estourou', c.excedente > 0);
+  el('barraPedido').classList.toggle('estourou', c.excedente > 0);
+  el('btnVer').disabled = n === 0;
+}
+
+function ampliar(sku){
+  const p = PRODUTOS.find(x=>x.sku===sku);
+  if(!p || !p.foto) return;
+  estado.ampliado = sku;
+  el('visorImg').innerHTML = `<img src="${p.foto}" alt="${esc(p.nome)}">`;
+  pintarVisor();
+  el('visor').classList.add('aberto');
+  document.body.style.overflow = 'hidden';
+}
+
+function pintarVisor(){
+  const p = PRODUTOS.find(x=>x.sku===estado.ampliado);
+  if(!p) return;
+  const qtd = estado.carrinho[p.sku]?.quantidade || 0;
+  el('visorPe').innerHTML = `
+    <h3>${esc(p.nome)}</h3>
+    <div class="cod">${esc(p.sku)}</div>
+    <div class="visor-linha">
+      <div class="preco">${brl(p.preco)}<small>por unidade</small></div>
+      <div class="acao">${qtd
+        ? `<div class="stepper">
+             <button onclick="mudar('${esc(p.sku)}',-1)" aria-label="Diminuir">&minus;</button>
+             <b>${qtd}</b>
+             <button onclick="mudar('${esc(p.sku)}',1)" aria-label="Aumentar">+</button>
+           </div>`
+        : `<button class="mais-btn" onclick="mudar('${esc(p.sku)}',1)">Adicionar</button>`}
+      </div>
+    </div>`;
+}
+
+function fecharVisor(){
+  estado.ampliado = null;
+  el('visor').classList.remove('aberto');
+  document.body.style.overflow = '';
+}
+
+function abrir(etapa){
+  estado.etapa = etapa;
+  el('fundoModal').classList.add('aberto');
+  el('painel').classList.add('aberto');
+  pintar();
+}
+
+function fecharTudo(){
+  el('fundoModal').classList.remove('aberto');
+  el('painel').classList.remove('aberto');
+}
+
+function observacaoTiny(){
+  const c = calcular();
+  const linhas = ['PREMIO CESTA DE LIMPEZA - ' + COMPETENCIA.rotulo];
+  linhas.push(c.excedente > 0
+    ? `Saldo ${brl(c.limite)} | Usado ${brl(c.usado)} | A PAGAR ${brl(c.excedente)}`
+    : `Saldo ${brl(c.limite)} | Usado ${brl(c.total)} | Sobrou ${brl(c.sobra)}`);
+  if(c.excedente > 0 && estado.pagamento)
+    linhas.push('Pagamento da diferença: ' + estado.pagamento);
+  if(estado.obs.trim()) linhas.push('Obs.: ' + estado.obs.trim());
+  return linhas.join('\n');
+}
+
+function pintar(){
+  const corpo = el('painelCorpo'), pe = el('painelPe');
+  el('tituloPainel').textContent = {carrinho:'Seu pedido', fechar:'Fechar pedido',
+    pronto:'Pedido enviado', meus:'Meus pedidos', detalhe:'Detalhe do pedido'}[estado.etapa] || '';
+  const c = calcular();
+
+  if(estado.etapa === 'carrinho'){
+    const itens = Object.values(estado.carrinho);
+    corpo.innerHTML = itens.length ? itens.map(i=>`
+      <div class="carrinho-item">
+        <div class="mini">${i.foto?`<img src="${i.foto}" alt="">`:''}</div>
+        <div>
+          <h4>${esc(i.nome)}</h4>
+          <div class="meta">${i.quantidade} un &times; ${brl(i.preco)}</div>
+          <button class="remover" onclick="mudar('${esc(i.sku)}',-${i.quantidade})">remover</button>
+        </div>
+        <div class="val">${brl(i.preco*i.quantidade)}</div>
+      </div>`).join('') : '<p class="vazio">Nenhum item ainda.</p>';
+    pe.innerHTML = `
+      <div class="total ${c.excedente?'estourou':''}"><span>Total</span><strong>${brl(c.total)}</strong></div>
+      <button class="principal" style="margin-top:12px" ${itens.length?'':'disabled'}
+              onclick="abrir('fechar')">Continuar</button>`;
+  }
+
+  if(estado.etapa === 'fechar'){
+    corpo.innerHTML = `
+      <div id="erro"></div>
+      <div class="quadro ${c.excedente?'alerta':''}">
+        <div class="sub">Saldo do prêmio <span>${brl(c.limite)}</span></div>
+        <div class="sub">Total do pedido <span>${brl(c.total)}</span></div>
+        <div class="total ${c.excedente?'estourou':''}" style="font-size:14px">
+          <span>${c.excedente ? 'Saldo a pagar' : 'Sobra do saldo'}</span>
+          <strong style="font-size:19px">${brl(c.excedente || c.sobra)}</strong>
+        </div>
+      </div>
+      ${c.excedente ? `
+      <div class="campo">
+        <label>Como você quer pagar ${c.limite ? 'a diferença' : 'este pedido'}?</label>
+        <div class="pagamentos">
+          ${PAGAMENTOS.map(f => `
+            <button class="forma" data-forma="${esc(f)}" aria-pressed="${estado.pagamento===f}"
+                    onclick="escolherPagamento(this.dataset.forma)">${esc(f)}</button>`).join('')}
+        </div>
+      </div>` : ''}
+      <div class="campo"><label for="obs">Tem alguma observação a acrescentar?</label>
+        <textarea id="obs" placeholder="Recado para a separação" oninput="estado.obs=this.value">${esc(estado.obs)}</textarea></div>`;
+    pe.innerHTML = `
+      <button class="principal" id="btnEnviar" onclick="enviar()">Enviar pedido</button>
+      <button class="secundario" onclick="abrir('carrinho')">Voltar ao pedido</button>`;
+  }
+
+  if(estado.etapa === 'meus'){
+    const cpf = estado.colaborador.cpf;
+    const meus = PEDIDOS.filter(x => x.cpf === cpf)
+      .sort((a,b) => b.competencia.localeCompare(a.competencia));
+    const porMes = {};
+    meus.forEach(x => (porMes[x.competencia] = porMes[x.competencia] || []).push(x));
+
+    corpo.innerHTML = Object.keys(porMes).length
+      ? Object.keys(porMes).sort().reverse().map(comp => {
+          const lista = porMes[comp];
+          const saldo = lista[0].saldo;
+          const usado = lista.reduce((s,x) => s + Math.min(x.total, x.saldo), 0);
+          const pagar = lista.reduce((s,x) => s + (x.excedente||0), 0);
+          return `
+          <div class="grupo-mes">
+            <h3>${rotuloComp(comp)}</h3>
+            <div class="quadro">
+              <div class="sub">Prêmio do mês <span>${brl(saldo)}</span></div>
+              <div class="sub">Usado <span>${brl(usado)}</span></div>
+              ${pagar ? `<div class="sub" style="color:var(--vermelho)">
+                Saldo pago <span>${brl(pagar)}</span></div>` : ''}
+            </div>
+            ${lista.map(x => `
+              <button class="hist" onclick="verMeuPedido('${esc(x.codigo)}')">
+                <div><b>${esc(x.data)}</b>
+                  <small>${x.itens.length} ${x.itens.length===1?'item':'itens'} ·
+                  ${x.tiny ? 'em separação' : 'aguardando'}</small></div>
+                <span class="valor">${brl(x.total)}</span>
+              </button>`).join('')}
+          </div>`;
+        }).join('')
+      : '<p class="vazio">Você ainda não fez pedidos.</p>';
+    pe.innerHTML = `<button class="principal" onclick="fecharTudo()">Voltar ao catálogo</button>`;
+  }
+
+  if(estado.etapa === 'detalhe'){
+    const x = estado.vendo;
+    corpo.innerHTML = !x ? '' : `
+      <div class="quadro">
+        <div class="sub">Data <span>${esc(x.data)}</span></div>
+        <div class="sub">Prêmio do mês <span>${brl(x.saldo)}</span></div>
+        <div class="sub">Total do pedido <span>${brl(x.total)}</span></div>
+        ${x.excedente ? `<div class="sub" style="color:var(--vermelho)">
+          Saldo pago <span>${brl(x.excedente)} · ${esc(x.pagamento||'')}</span></div>` : ''}
+      </div>
+      ${x.itens.map(i => `
+        <div class="carrinho-item">
+          <div class="mini">${fotoDe(i.sku)}</div>
+          <div><h4>${esc(i.nome)}</h4><div class="meta">${i.quantidade} un × ${brl(i.preco)}</div></div>
+          <div class="val">${brl(i.quantidade*i.preco)}</div>
+        </div>`).join('')}`;
+    pe.innerHTML = `<button class="principal" onclick="repetirPedido()">Repetir este pedido</button>
+      <button class="secundario" onclick="abrir('meus')">Voltar</button>`;
+  }
+
+  if(estado.etapa === 'pronto'){
+    const p = estado.pedido || {};
+    corpo.innerHTML = `
+      <div class="ok">
+        <div class="selo">&check;</div>
+        <h2>Pedido enviado</h2>
+        <p class="nota">${p.numero
+          ? 'Pedido <strong>'+esc(p.numero)+'</strong> registrado.'
+          : 'Seu pedido foi registrado.'}<br>
+        A separação vai preparar e avisar quando estiver pronto.</p>
+      </div>
+      ${p.excedente ? `<div class="quadro alerta" style="text-align:center">
+        Saldo a pagar deste pedido: <b>${brl(p.excedente)}</b>${
+          p.pagamento ? ' · ' + esc(p.pagamento) : ''}</div>` : ''}`;
+    pe.innerHTML = `<button class="principal" onclick="recomecar()">Voltar ao início</button>`;
+  }
+}
+
+function escolherPagamento(f){
+  estado.pagamento = f;
+  document.querySelectorAll('.forma').forEach(b =>
+    b.setAttribute('aria-pressed', String(b.dataset.forma === f)));
+  const erro = el('erro');
+  if(erro) erro.innerHTML = '';
+}
+
+async function enviar(){
+  const c = calcular();
+  if(c.excedente > 0 && !estado.pagamento){
+    el('erro').innerHTML = `<div class="aviso">Escolha como quer pagar ${
+      c.limite ? 'a diferença' : 'este pedido'}.</div>`;
+    return;
+  }
+  const b = el('btnEnviar'); b.disabled = true; b.textContent = 'Enviando...';
+
+  const {data, error} = await sb.rpc('criar_pedido', {
+    p_itens: Object.values(estado.carrinho)
+               .map(i => ({sku: i.sku, quantidade: i.quantidade})),
+    p_obs: estado.obs.trim() || null,
+    p_pagamento: c.excedente > 0 ? estado.pagamento : null,
+  });
+
+  if(error){
+    b.disabled = false; b.textContent = 'Enviar pedido';
+    el('erro').innerHTML = `<div class="aviso">${esc(error.message)}</div>`;
+    return;
+  }
+
+  estado.pedido = {numero: data, excedente: c.excedente, pagamento: estado.pagamento};
+  estado.carrinho = {}; estado.obs = ''; estado.pagamento = null;
+  await enviarAoTiny(data);   // se falhar, fica pendente para o admin reenviar
+  await carregarPedidos();
+  atualizarSaldo(); desenhar(); abrir('pronto');
+}
+
+function fotoDe(sku){
+  const p = PRODUTOS.find(x => x.sku === sku);
+  return p && p.foto ? `<img src="${p.foto}" alt="">` : '';
+}
+
+function verMeuPedido(codigo){
+  estado.vendo = PEDIDOS.find(x => x.codigo === codigo);
+  abrir('detalhe');
+}
+
+function repetirPedido(){
+  const x = estado.vendo;
+  if(!x) return;
+  let fora = [];
+  estado.carrinho = {};
+  x.itens.forEach(i => {
+    const p = PRODUTOS.find(y => y.sku === i.sku);
+    if(p && p.ativo) estado.carrinho[p.sku] = {...p, quantidade:i.quantidade};
+    else fora.push(i.nome);
+  });
+  atualizarSaldo(); desenhar(); abrir('carrinho');
+  if(fora.length) setTimeout(() => alert(
+    'Estes itens não estão disponíveis e ficaram de fora:\n\n' + fora.join('\n')), 250);
+}
+
+function recomecar(){ fecharTudo(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+function mostrarSeloDemo(){}
+
+const ABAS_ADMIN = [
+  {id:'produtos', rotulo:'Produtos',
+   icone:'<path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/>'},
+  {id:'colaboradores', rotulo:'Colaboradores',
+   icone:'<path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9"/>'},
+  {id:'premio', rotulo:'Prêmio do mês',
+   icone:'<circle cx="12" cy="9" r="6"/><path d="M8.5 14.5L7 22l5-3 5 3-1.5-7.5"/>'},
+  {id:'pedidos', rotulo:'Relatório de pedidos',
+   icone:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/>'},
+  {id:'integracao', rotulo:'Integração Tiny',
+   icone:'<path d="M9 2v6M15 2v6M6 8h12v4a6 6 0 0 1-12 0V8zM12 18v4"/>'},
+];
+
+const admin = {aba:'produtos', busca:'', filtro:'ativos', previa:null,
+               editando:null, fotoNova:null, competencia: compAtual(), importando:null,
+               linhasImport:null, inativarAusentes:true, filtroTiny:'todos'};
+
+function rotuloComp(v){
+  const [a,m] = v.split('-');
+  return MESES[+m-1] + ' de ' + a;
+}
+
+function competenciasDisponiveis(){
+  const lista = [];
+  for(let i = 0; i < 8; i++){
+    const d = new Date(COMPETENCIA.ano, COMPETENCIA.mes - 1 - i, 1);
+    lista.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`);
+  }
+  return lista;
+}
+
+function abrirAdmin(){
+  el('admin').classList.add('aberta');
+  document.body.style.overflow = 'hidden';
+  el('lateralItens').innerHTML = ABAS_ADMIN.map(a => `
+    <button class="lateral-item" ${admin.aba===a.id?'aria-current="page"':''}
+            onclick="irAba('${a.id}')" title="${a.rotulo}">
+      <svg viewBox="0 0 24 24" aria-hidden="true">${a.icone}</svg>
+      <span>${a.rotulo}</span></button>`).join('');
+  pintarAdmin();
+}
+
+function fecharAdmin(){
+  el('admin').classList.remove('aberta','menu-aberto');
+  document.body.style.overflow = '';
+}
+
+function verComoColaborador(){
+  fecharAdmin();
+  el('btnAdmin').hidden = false;
+  const c = estado.colaborador;
+  el('ola').innerHTML = `Olá, <b>${esc(primeiroNome(c.nome))}</b>` +
+    (c.saldo > 0 ? `, esse mês você tem <span class="valor">${brl(c.saldo)}</span>` : '');
+  el('programa').textContent = 'Prêmio Cesta de Limpeza · ' + COMPETENCIA.rotulo;
+  abas(); desenhar(); atualizarSaldo();
+}
+
+function irAba(id){
+  admin.aba = id; admin.busca = ''; admin.filtro = 'ativos'; admin.previa = null;
+  el('lateralItens').querySelectorAll('.lateral-item').forEach((b,i) => {
+    if(ABAS_ADMIN[i].id === id) b.setAttribute('aria-current','page');
+    else b.removeAttribute('aria-current');
+  });
+  fecharLateral();
+  pintarAdmin();
+  document.querySelector('.admin-corpo').scrollTop = 0;
+}
+
+function abrirLateral(){ el('admin').classList.add('menu-aberto'); }
+function fecharLateral(){ el('admin').classList.remove('menu-aberto'); }
+function recolherLateral(){
+  const a = el('admin');
+  if(window.innerWidth <= 860) a.classList.toggle('menu-aberto');
+  else a.classList.toggle('recolhida');
+}
+
+function pintarAdmin(){
+  ({produtos: telaProdutos, colaboradores: telaColaboradores, premio: telaPremio,
+    pedidos: telaPedidos, integracao: telaIntegracao}[admin.aba])();
+}
+
+function selo(ativo, acao, rotuloAria){
+  const classe = 'selo-status ' + (ativo ? 's-ativo' : 's-inativo');
+  const texto = ativo ? 'Ativo' : 'Inativo';
+  return acao
+    ? `<button class="${classe} clicavel" onclick="${acao}"
+         aria-label="${esc(rotuloAria)}" title="Clique para alternar">${texto}</button>`
+    : `<span class="${classe}">${texto}</span>`;
+}
+
+/* ---------------------------------------------------------------- produtos */
+
+/* Redesenha a tela sem tirar o cursor do campo que está em uso. */
+function repintar(desenhar){
+  const alvo = document.activeElement;
+  const id = alvo && alvo.id;
+  const pos = alvo && alvo.selectionStart;
+  desenhar();
+  if(!id) return;
+  const novo = el(id);
+  if(!novo) return;
+  novo.focus();
+  try{ novo.setSelectionRange(pos, pos); }catch(e){}
+}
+
+function telaProdutos(){
+  const termo = admin.busca.toLowerCase();
+  const lista = PRODUTOS.filter(p =>
+    (admin.filtro === 'todos' || (admin.filtro === 'ativos' ? p.ativo : !p.ativo)) &&
+    (!termo || (p.nome + ' ' + p.sku).toLowerCase().includes(termo)));
+  const ativos = PRODUTOS.filter(p => p.ativo).length;
+
+  el('adminCorpo').innerHTML = `
+    <div class="admin-cab">
+      <h2>Produtos</h2>
+      <button class="btn" onclick="exportarProdutos()">Exportar planilha</button>
+      <button class="btn azul" onclick="pedirPlanilha('produtos')">Importar planilha</button>
+    </div>
+    <div class="resumo-topo">
+      <div class="cartao-num"><small>Cadastrados</small><b>${PRODUTOS.length}</b></div>
+      <div class="cartao-num"><small>Ativos</small><b class="verde">${ativos}</b></div>
+      <div class="cartao-num"><small>Inativos</small><b>${PRODUTOS.length - ativos}</b></div>
+      <div class="cartao-num"><small>Sem foto</small><b>${PRODUTOS.filter(p=>!p.foto).length}</b></div>
+    </div>
+    <div class="filtro-linha">
+      <input type="search" placeholder="Buscar por nome ou código" value="${esc(admin.busca)}"
+             id="buscaAdmin" oninput="admin.busca=this.value;repintar(telaProdutos)">
+      <select onchange="admin.filtro=this.value;telaProdutos()">
+        <option value="todos" ${admin.filtro==='todos'?'selected':''}>Todos</option>
+        <option value="ativos" ${admin.filtro==='ativos'?'selected':''}>Só ativos</option>
+        <option value="inativos" ${admin.filtro==='inativos'?'selected':''}>Só inativos</option>
+      </select>
+    </div>
+    <div class="tabela">
+      <div class="cab-tabela produtos-grid">
+        <span></span><span>Produto</span><span>Preço</span><span>Status</span><span></span>
+      </div>
+      ${lista.length ? lista.map(linhaProduto).join('')
+                     : '<p class="em-breve">Nenhum produto encontrado.</p>'}
+    </div>
+    <p class="nota">Produto inativo some da lista do colaborador. O histórico é preservado.</p>`;
+}
+
+function linhaProduto(p){
+  return `
+  <div class="linha produtos-grid ${p.ativo?'':'inativa'}">
+    <div class="thumb">${p.foto ? `<img src="${p.foto}" alt="">` : '<span>sem<br>foto</span>'}</div>
+    <div class="info"><b>${esc(p.nome)}</b><small>${esc(p.sku)} · ${esc(p.linha)}</small></div>
+    <div class="valor">${brl(p.preco)}<small>por unidade</small></div>
+    <div>${selo(p.ativo, `virarProduto('${esc(p.sku)}')`,
+      (p.ativo?'Tornar inativo: ':'Tornar ativo: ') + p.nome)}</div>
+    <button class="mini-btn" onclick="editarProduto('${esc(p.sku)}')"
+            aria-label="Editar ${esc(p.nome)}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+  </div>`;
+}
+
+/* ---------------------------------------------------- gravação no Supabase */
+
+function avisarErro(e){
+  alert('Não foi possível salvar: ' + (e.message || e));
+}
+
+async function gravarProduto(p){
+  const {error} = await sb.from('produtos').upsert({
+    sku: p.sku, nome: p.nome, unidade: p.unidade, ncm: p.ncm, ean: p.ean,
+    linha: p.linha, preco: p.preco, litragem: p.litragem,
+    ativo: !!p.ativo, ordem: p.ordem, foto_url: p.foto_url || null,
+  });
+  if(error) avisarErro(error);
+}
+
+async function gravarColaborador(c){
+  const {error} = await sb.from('colaboradores').upsert({
+    cpf: c.cpf, nome: c.nome, ativo: !!c.ativo, admin: !!c.admin,
+  });
+  if(error) avisarErro(error);
+}
+
+async function subirFoto(sku, dataUrl){
+  const m = String(dataUrl).match(/^data:image\/([a-z]+);base64,(.+)$/);
+  if(!m) return null;
+  const bin = atob(m[2]);
+  const buf = new Uint8Array(bin.length);
+  for(let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+  const nome = `${sku}.${m[1]}`;
+  const {error} = await sb.storage.from('produtos')
+    .upload(nome, buf, {contentType: `image/${m[1]}`, upsert: true});
+  if(error){ avisarErro(error); return null; }
+  return nome;
+}
+
+function virarProduto(sku){
+  const p = PRODUTOS.find(x => x.sku === sku);
+  if(!p) return;
+  p.ativo = p.ativo ? 0 : 1;
+  if(!p.ativo && estado.carrinho[sku]) delete estado.carrinho[sku];
+  telaProdutos(); gravarProduto(p);
+}
+
+function editarProduto(sku){
+  const p = PRODUTOS.find(x => x.sku === sku);
+  if(!p) return;
+  admin.editando = {tipo:'produto', sku, ativo:p.ativo};
+  admin.fotoNova = null;
+  abrirFicha('Editar produto', `
+    <div class="bloco">
+      <div class="bloco-titulo">Foto</div>
+      <div class="foto-linha">
+        <div class="foto-quadro" id="fichaFoto">${p.foto
+          ? `<img src="${p.foto}" alt="">` : '<span>sem foto</span>'}</div>
+        <div class="foto-acoes">
+          <button class="btn" onclick="el('arqFoto').click()">Escolher imagem</button>
+          <button class="btn perigo" id="btnTirarFoto" ${p.foto?'':'hidden'}
+                  onclick="removerFoto()">Remover foto</button>
+          <span class="nota" style="margin:0">PNG com fundo transparente fica melhor.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bloco">
+      <div class="bloco-titulo">Dados do produto</div>
+      <div class="campo"><label for="fNome">Descrição</label>
+        <input id="fNome" value="${esc(p.nome)}"></div>
+      <div class="dupla">
+        <div class="campo"><label for="fSku">Código (SKU)</label>
+          <input id="fSku" value="${esc(p.sku)}"></div>
+        <div class="campo"><label for="fPreco">Preço por unidade</label>
+          <input id="fPreco" inputmode="decimal" value="${(p.preco/100).toFixed(2).replace('.',',')}"></div>
+      </div>
+      <div class="campo" style="margin-bottom:0"><label for="fLinha">Categoria</label>
+        <select id="fLinha">
+          ${['CASA','ROUPAS','COZINHA'].map(l =>
+            `<option ${p.linha===l?'selected':''}>${l}</option>`).join('')}
+        </select></div>
+    </div>
+`,
+    'salvarProduto()');
+}
+
+function marcarStatus(campo, valor){
+  el(campo).value = valor;
+  el(campo).parentElement.querySelectorAll(`[data-campo="${campo}"]`).forEach(b =>
+    b.setAttribute('aria-pressed', String(b.dataset.valor === String(valor))));
+}
+
+function removerFoto(){
+  admin.fotoNova = '';
+  el('fichaFoto').innerHTML = '<span>sem foto</span>';
+  const b = el('btnTirarFoto'); if(b) b.hidden = true;
+}
+
+function trocarFoto(input){
+  const arq = input.files && input.files[0];
+  input.value = '';
+  if(!arq) return;
+  const leitor = new FileReader();
+  leitor.onload = () => {
+    admin.fotoNova = leitor.result;
+    el('fichaFoto').innerHTML = `<img src="${leitor.result}" alt="">`;
+    const b = el('btnTirarFoto'); if(b) b.hidden = false;
+  };
+  leitor.readAsDataURL(arq);
+}
+
+async function salvarProduto(){
+  const p = PRODUTOS.find(x => x.sku === admin.editando.sku);
+  if(!p) return;
+  const preco = Math.round(parseFloat(el('fPreco').value.replace(/\./g,'').replace(',','.')) * 100);
+  if(!isFinite(preco) || preco <= 0) return erroFicha('Preço inválido.');
+  const sku = el('fSku').value.trim();
+  if(!sku) return erroFicha('Informe o código.');
+  if(sku !== p.sku && PRODUTOS.some(x => x.sku === sku))
+    return erroFicha('Já existe produto com este código.');
+
+  const antigo = p.sku;
+  p.nome  = el('fNome').value.trim() || p.nome;
+  p.sku   = sku;
+  p.preco = preco;
+  p.linha = el('fLinha').value;
+
+  if(admin.fotoNova !== null){
+    if(admin.fotoNova === ''){ p.foto_url = null; p.foto = ''; }
+    else {
+      const nome = await subirFoto(sku, admin.fotoNova);
+      if(nome){ p.foto_url = nome; p.foto = urlFoto(nome) + '?v=' + Date.now(); }
+    }
+  }
+  if(!p.ativo && estado.carrinho[p.sku]) delete estado.carrinho[p.sku];
+
+  await gravarProduto(p);
+  if(antigo !== sku) await sb.from('produtos').delete().eq('sku', antigo);
+
+  fecharFicha(); telaProdutos();
+}
+
+function exportarProdutos(){
+  baixarCsv(`produtos${sufixoFiltro()}.csv`,
+    ['CODIGO','DESCRICAO','CATEGORIA','PRECO','SITUACAO'],
+    PRODUTOS.filter(passaFiltro).map(p => [p.sku, p.nome, p.linha,
+      (p.preco/100).toFixed(2).replace('.',','), p.ativo ? 'ATIVO' : 'INATIVO']));
+}
+
+/* ---------------------------------------------------------- colaboradores */
+
+function telaColaboradores(){
+  const termo = admin.busca.toLowerCase();
+  const lista = COLABORADORES.filter(c =>
+    (admin.filtro === 'todos' || (admin.filtro === 'ativos' ? c.ativo : !c.ativo)) &&
+    (!termo || (c.nome + ' ' + c.cpf).toLowerCase().includes(termo)));
+  const ativos = COLABORADORES.filter(c => c.ativo).length;
+
+  el('adminCorpo').innerHTML = `
+    <div class="admin-cab">
+      <h2>Colaboradores</h2>
+      <button class="btn" onclick="novoColaborador()">Novo</button>
+      <button class="btn" onclick="exportarColaboradores()">Exportar planilha</button>
+      <button class="btn azul" onclick="pedirPlanilha('colaboradores')">Importar planilha</button>
+    </div>
+    <div class="resumo-topo">
+      <div class="cartao-num"><small>Cadastrados</small><b>${COLABORADORES.length}</b></div>
+      <div class="cartao-num"><small>Ativos</small><b class="verde">${ativos}</b></div>
+      <div class="cartao-num"><small>Inativos</small><b>${COLABORADORES.length - ativos}</b></div>
+      <div class="cartao-num"><small>Sem senha criada</small><b>${COLABORADORES.filter(c=>!c.tem_senha).length}</b></div>
+    </div>
+    <div class="filtro-linha">
+      <input type="search" placeholder="Buscar por nome ou CPF" value="${esc(admin.busca)}"
+             id="buscaAdmin" oninput="admin.busca=this.value;repintar(telaColaboradores)">
+      <select onchange="admin.filtro=this.value;telaColaboradores()">
+        <option value="todos" ${admin.filtro==='todos'?'selected':''}>Todos</option>
+        <option value="ativos" ${admin.filtro==='ativos'?'selected':''}>Só ativos</option>
+        <option value="inativos" ${admin.filtro==='inativos'?'selected':''}>Só inativos</option>
+      </select>
+    </div>
+    <div class="tabela">
+      <div class="cab-tabela colab-grid">
+        <span>Nome</span><span>CPF</span><span>Senha</span><span>Status</span><span></span>
+      </div>
+      ${lista.length ? lista.map(linhaColaborador).join('')
+                     : '<p class="em-breve">Nenhum colaborador encontrado.</p>'}
+    </div>
+    <p class="nota">Este cadastro não guarda valor de prêmio. Os valores do mês ficam na aba Prêmio do mês.</p>`;
+}
+
+function linhaColaborador(c){
+  return `
+  <div class="linha colab-grid ${c.ativo?'':'inativa'}">
+    <div class="info"><b>${esc(c.nome)}</b>${c.admin?'<small>administrador</small>':''}</div>
+    <div class="mono">${formatarCpf(c.cpf)}</div>
+    <div>${c.tem_senha ? '<span class="selo-status s-ativo">Criada</span>'
+                       : '<span class="selo-status s-pendente">Pendente</span>'}</div>
+    <div>${selo(c.ativo, `virarColaborador('${c.cpf}')`,
+      (c.ativo?'Inativar ':'Ativar ') + c.nome)}</div>
+    <button class="mini-btn" onclick="editarColaborador('${c.cpf}')"
+            aria-label="Editar ${esc(c.nome)}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+  </div>`;
+}
+
+function virarColaborador(cpf){
+  const c = COLABORADORES.find(x => x.cpf === cpf);
+  if(!c) return;
+  c.ativo = c.ativo ? 0 : 1;
+  telaColaboradores(); gravarColaborador(c);
+}
+
+function novoColaborador(){
+  admin.editando = {tipo:'colaborador', cpf:null};
+  abrirFicha('Novo colaborador', fichaColaborador({nome:'',cpf:'',ativo:1,admin:false,tem_senha:false}),
+             'salvarColaborador()');
+}
+
+function editarColaborador(cpf){
+  const c = COLABORADORES.find(x => x.cpf === cpf);
+  if(!c) return;
+  admin.editando = {tipo:'colaborador', cpf};
+  abrirFicha('Editar colaborador', fichaColaborador(c), 'salvarColaborador()');
+}
+
+function fichaColaborador(c){
+  return `
+    <div class="bloco">
+      <div class="bloco-titulo">Identificação</div>
+      <div class="campo"><label for="cNome">Nome completo</label>
+        <input id="cNome" value="${esc(c.nome)}"></div>
+      <div class="campo" style="margin-bottom:0"><label for="cCpf">CPF</label>
+        <input id="cCpf" inputmode="numeric" maxlength="14" placeholder="000.000.000-00"
+               value="${c.cpf?formatarCpf(c.cpf):''}" oninput="mascaraCpf(this)"></div>
+    </div>
+
+    <div class="bloco">
+      <div class="bloco-titulo">Perfil</div>
+      <input type="hidden" id="cPerfil" value="${c.admin?'admin':'colaborador'}">
+      <div class="opcoes">
+        <button class="opcao" data-campo="cPerfil" data-valor="colaborador"
+                aria-pressed="${!c.admin}" onclick="marcarStatus('cPerfil','colaborador')">
+          <b>Colaborador</b><small>Só faz pedido</small></button>
+        <button class="opcao" data-campo="cPerfil" data-valor="admin"
+                aria-pressed="${!!c.admin}" onclick="marcarStatus('cPerfil','admin')">
+          <b>Administrador</b><small>Acessa tudo</small></button>
+      </div>
+    </div>
+
+    ${c.cpf ? `<div class="bloco" style="margin-bottom:0">
+      <div class="bloco-titulo">Senha</div>
+      <div class="sub" style="margin:0 0 4px">
+        <span style="margin:0">Situação</span>
+        <span>${c.tem_senha ? 'criada pelo colaborador' : 'ainda não criada'}<small>A senha é guardada cifrada. Ninguém consegue lê-la, nem o administrador.</small></span></div>
+      ${c.tem_senha ? `<button class="btn perigo" style="margin-top:10px"
+        onclick="zerarSenha('${c.cpf}')">Zerar senha</button>
+      <p class="nota">Ele cria uma nova no próximo acesso.</p>` : ''}
+    </div>` : ''}`;
+}
+
+async function zerarSenha(cpf){
+  const c = COLABORADORES.find(x => x.cpf === cpf);
+  if(!c) return;
+  if(!confirm(`Zerar a senha de ${c.nome}?\n\n`
+            + 'Ela será apagada e a pessoa cria uma nova no próximo acesso, '
+            + 'digitando o CPF.')) return;
+  const {error} = await sb.rpc('zerar_senha', {p_cpf: cpf});
+  if(error) return avisarErro(error);
+  c.tem_senha = false;
+  fecharFicha(); telaColaboradores();
+}
+
+async function salvarColaborador(){
+  const nome = el('cNome').value.trim();
+  const cpf = digitos(el('cCpf').value);
+  if(nome.split(' ').filter(Boolean).length < 2) return erroFicha('Informe nome e sobrenome.');
+  if(cpf.length !== 11) return erroFicha('CPF incompleto.');
+
+  const antigo = admin.editando.cpf;
+  if(cpf !== antigo && COLABORADORES.some(x => x.cpf === cpf))
+    return erroFicha('Já existe cadastro com este CPF.');
+
+  let c = COLABORADORES.find(x => x.cpf === antigo);
+  if(!c){ c = {cpf, nome, saldo:0, saldos:{}, ativo:1, tem_senha:false, admin:false}; COLABORADORES.push(c); }
+  c.nome = nome; c.cpf = cpf;
+  if(!admin.editando.cpf) c.ativo = 1;
+  c.admin = el('cPerfil').value === 'admin';
+
+  await gravarColaborador(c);
+  if(antigo && antigo !== cpf) await sb.from('colaboradores').delete().eq('cpf', antigo);
+
+  COLABORADORES.sort((a,b) => a.nome.localeCompare(b.nome,'pt-BR'));
+  fecharFicha(); telaColaboradores();
+}
+
+function exportarColaboradores(){
+  baixarCsv(`colaboradores${sufixoFiltro()}.csv`,
+    ['NOME','CPF','PERFIL','SITUACAO'],
+    COLABORADORES.filter(passaFiltro).map(c => [c.nome, formatarCpf(c.cpf),
+      c.admin ? 'ADMINISTRADOR' : 'COLABORADOR', c.ativo ? 'ATIVO' : 'INATIVO']));
+}
+
+/* ------------------------------------------------------------ prêmio do mês */
+
+function telaPremio(){
+  const termo = admin.busca.toLowerCase();
+  const ativos = COLABORADORES.filter(c => c.ativo);
+  const lista = COLABORADORES.filter(passaFiltro)
+    .filter(c => !termo || (c.nome + ' ' + c.cpf).toLowerCase().includes(termo));
+  const totalMes = ativos.reduce((s,c) => s + saldoDe(c, admin.competencia), 0);
+  const semSaldo = ativos.filter(c => !saldoDe(c, admin.competencia)).length;
+
+  el('adminCorpo').innerHTML = `
+    <div class="admin-cab">
+      <h2>Prêmio do mês</h2>
+      <button class="btn" onclick="exportarPremio()">Exportar planilha</button>
+      <button class="btn azul" onclick="pedirPlanilha('premio')">Importar planilha</button>
+    </div>
+    <div class="campo" style="max-width:280px">
+      <label for="compPremio">Competência</label>
+      <select id="compPremio" onchange="admin.competencia=this.value;telaPremio()">
+        ${competenciasDisponiveis().map(v =>
+          `<option value="${v}" ${admin.competencia===v?'selected':''}>${rotuloComp(v)}</option>`).join('')}
+      </select>
+    </div>
+    <div class="resumo-topo">
+      <div class="cartao-num"><small>Colaboradores ativos</small><b>${ativos.length}</b></div>
+      <div class="cartao-num"><small>Com saldo</small><b class="verde">${ativos.length - semSaldo}</b></div>
+      <div class="cartao-num"><small>Sem saldo</small><b>${semSaldo}</b></div>
+      <div class="cartao-num"><small>Total do mês</small><b>${brl(totalMes)}</b></div>
+    </div>
+    <div class="filtro-linha">
+      <input type="search" placeholder="Buscar por nome ou CPF" value="${esc(admin.busca)}"
+             id="buscaAdmin" oninput="admin.busca=this.value;repintar(telaPremio)">
+      <select onchange="admin.filtro=this.value;telaPremio()">
+        <option value="ativos" ${admin.filtro==='ativos'?'selected':''}>Só ativos</option>
+        <option value="todos" ${admin.filtro==='todos'?'selected':''}>Todos</option>
+        <option value="inativos" ${admin.filtro==='inativos'?'selected':''}>Só inativos</option>
+      </select>
+    </div>
+    <div class="tabela">
+      <div class="cab-tabela premio-grid"><span>Nome</span><span>CPF</span><span>Valor do prêmio</span></div>
+      ${lista.map(c => `
+        <div class="linha premio-grid">
+          <div class="info"><b>${esc(c.nome)}</b></div>
+          <div class="mono">${formatarCpf(c.cpf)}</div>
+          <div class="valor ${saldoDe(c, admin.competencia)?'':'zerado'}">${brl(saldoDe(c, admin.competencia))}</div>
+        </div>`).join('')}
+    </div>
+    <p class="nota">A planilha exportada já vem com os colaboradores ativos. Preencha os valores e importe de volta.</p>`;
+}
+
+function saldoDe(c, comp){
+  if(c.saldos && c.saldos[comp] !== undefined) return c.saldos[comp];
+  return comp === `${COMPETENCIA.ano}-${String(COMPETENCIA.mes).padStart(2,'0')}` ? (c.saldo||0) : 0;
+}
+
+function exportarPremio(){
+  baixarCsv(`premio-${admin.competencia}${sufixoFiltro()}.csv`,
+    ['NOME','CPF','VALOR PREMIO (R$)'],
+    COLABORADORES.filter(passaFiltro).map(c =>
+      [c.nome, formatarCpf(c.cpf), (saldoDe(c, admin.competencia)/100).toFixed(2).replace('.',',')]));
+}
+
+/* ----------------------------------------------------------------- pedidos */
+
+function telaPedidos(){
+  const ativo = cpf => {
+    const c = COLABORADORES.find(x => x.cpf === cpf);
+    return !c || !!c.ativo;
+  };
+  const lista = PEDIDOS.filter(p => p.competencia === admin.competencia &&
+    (admin.filtroTiny === 'todos' ||
+     (admin.filtroTiny === 'enviados' ? p.tiny : !p.tiny)) &&
+    (admin.filtro === 'todos' ||
+     (admin.filtro === 'ativos' ? ativo(p.cpf) : !ativo(p.cpf))));
+  const enviados = PEDIDOS.filter(p => p.competencia === admin.competencia && p.tiny).length;
+  const doMes = PEDIDOS.filter(p => p.competencia === admin.competencia);
+  const aPagar = doMes.reduce((s,p) => s + (p.excedente||0), 0);
+
+  el('adminCorpo').innerHTML = `
+    <div class="admin-cab">
+      <h2>Relatório de pedidos</h2>
+      <button class="btn" onclick="exportarPedidos()">Exportar planilha</button>
+      <button class="btn" onclick="relatorioMensal()">Relatório em PDF</button>
+    </div>
+    <div class="campo" style="max-width:280px">
+      <label for="compPedidos">Competência</label>
+      <select id="compPedidos" onchange="admin.competencia=this.value;telaPedidos()">
+        ${competenciasDisponiveis().map(v =>
+          `<option value="${v}" ${admin.competencia===v?'selected':''}>${rotuloComp(v)}</option>`).join('')}
+      </select>
+    </div>
+    <div class="resumo-topo">
+      <div class="cartao-num"><small>Pedidos</small><b>${doMes.length}</b></div>
+      <div class="cartao-num"><small>No Tiny</small><b class="verde">${enviados}</b></div>
+      <div class="cartao-num"><small>Pendentes</small><b class="${doMes.length-enviados?'vermelho':''}">${doMes.length - enviados}</b></div>
+      <div class="cartao-num"><small>A receber</small><b>${brl(aPagar)}</b></div>
+    </div>
+    <div class="filtro-linha">
+      <select onchange="admin.filtroTiny=this.value;telaPedidos()">
+        <option value="todos" ${admin.filtroTiny==='todos'?'selected':''}>Todo status no Tiny</option>
+        <option value="enviados" ${admin.filtroTiny==='enviados'?'selected':''}>Só enviados ao Tiny</option>
+        <option value="pendentes" ${admin.filtroTiny==='pendentes'?'selected':''}>Só pendentes</option>
+      </select>
+      <select onchange="admin.filtro=this.value;telaPedidos()">
+        <option value="ativos" ${admin.filtro==='ativos'?'selected':''}>Só colaboradores ativos</option>
+        <option value="todos" ${admin.filtro==='todos'?'selected':''}>Ativos e desligados</option>
+        <option value="inativos" ${admin.filtro==='inativos'?'selected':''}>Só desligados</option>
+      </select>
+    </div>
+    ${doMes.length ? `<div class="tabela">
+      <div class="cab-tabela pedidos-grid">
+        <span>Colaborador</span><span>Data</span><span>Total</span><span>A pagar</span><span>Tiny</span><span></span>
+      </div>
+      ${lista.map(linhaPedido).join('')}
+    </div>` : '<p class="em-breve">Nenhum pedido nesta competência.</p>'}`;
+}
+
+function linhaPedido(p){
+  return `
+  <div class="linha pedidos-grid">
+    <div class="info"><b>${esc(p.nome)}</b><small>${esc(p.codigo)}</small></div>
+    <div class="mono">${esc(p.data)}</div>
+    <div class="valor">${brl(p.total)}</div>
+    <div class="valor ${p.excedente?'vermelho':''}">${p.excedente?brl(p.excedente):'—'}</div>
+    <div>${p.tiny
+      ? `<span class="selo-status s-ativo">Nº ${esc(p.tiny)}</span>`
+      : '<span class="selo-status s-pendente">Pendente</span>'}</div>
+    <button class="mini-btn" onclick="verPedidoAdmin('${esc(p.codigo)}')"
+            aria-label="Abrir pedido ${esc(p.codigo)}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+  </div>`;
+}
+
+function verPedidoAdmin(codigo){
+  const p = PEDIDOS.find(x => x.codigo === codigo);
+  if(!p) return;
+  abrirFicha(`Pedido ${p.codigo}`, `
+    <div class="quadro">
+      <div class="sub"><span style="margin:0">Colaborador</span><span>${esc(p.nome)}</span></div>
+      <div class="sub"><span style="margin:0">Data</span><span>${esc(p.data)}</span></div>
+      <div class="sub"><span style="margin:0">Saldo do prêmio</span><span>${brl(p.saldo)}</span></div>
+      ${p.excedente ? `<div class="sub" style="color:var(--vermelho)">
+        <span style="margin:0">Saldo a pagar</span><span>${brl(p.excedente)} · ${esc(p.pagamento||'—')}</span></div>` : ''}
+      <div class="sub"><span style="margin:0">Tiny</span>
+        <span>${p.tiny ? 'pedido nº ' + esc(p.tiny) : 'não enviado'}</span></div>
+    </div>
+    <div class="tabela" style="margin-bottom:14px">
+      ${p.itens.map(i => `
+        <div class="linha" style="display:flex">
+          <div class="info"><b>${esc(i.nome)}</b><small>${esc(i.sku)}</small></div>
+          <div class="valor">${i.quantidade} un<small>${brl(i.preco)}</small></div>
+        </div>`).join('')}
+    </div>
+    ${!p.tiny ? `<button class="btn azul" style="width:100%;margin-bottom:9px"
+      onclick="reenviarTiny('${esc(p.codigo)}')">Tentar enviar ao Tiny de novo</button>` : ''}
+    <button class="btn" style="width:100%" onclick="imprimirPedido('${esc(p.codigo)}')">
+      Baixar PDF no padrão do Tiny</button>`, null);
+}
+
+async function enviarAoTiny(codigo){
+  const {data, error} = await sb.functions.invoke('enviar-tiny', {body:{codigo}});
+  if(error){
+    let msg = error.message;
+    try{ msg = (await error.context.json()).erro || msg; }catch(e){}
+    return {erro: msg};
+  }
+  if(data && data.erro) return {erro: data.erro};
+  return {numero: data && data.numero};
+}
+
+async function reenviarTiny(codigo){
+  const p = PEDIDOS.find(x => x.codigo === codigo);
+  if(!p) return;
+  const btn = document.querySelector('#fichaCorpo button.btn.azul');
+  if(btn){ btn.disabled = true; btn.textContent = 'Enviando...'; }
+
+  const r = await enviarAoTiny(codigo);
+  if(r.erro){
+    if(btn){ btn.disabled = false; btn.textContent = 'Enviar ao Tiny'; }
+    erroFicha('Tiny recusou: ' + esc(r.erro));
+    p.tiny_erro = r.erro;
+    return;
+  }
+  p.tiny = r.numero; p.tiny_erro = null;
+  fecharFicha(); telaPedidos();
+}
+
+function exportarPedidos(){
+  const lista = PEDIDOS.filter(p => p.competencia === admin.competencia);
+  baixarCsv(`pedidos-${admin.competencia}.csv`,
+    ['CODIGO','COLABORADOR','CPF','DATA','SALDO','TOTAL','A PAGAR','PAGAMENTO','TINY'],
+    lista.map(p => [p.codigo, p.nome, formatarCpf(p.cpf), p.data,
+      (p.saldo/100).toFixed(2).replace('.',','),
+      (p.total/100).toFixed(2).replace('.',','),
+      ((p.excedente||0)/100).toFixed(2).replace('.',','),
+      p.pagamento||'', p.tiny||'não enviado']));
+}
+
+function relatorioMensal(){
+  const comp = admin.competencia;
+  const pedidos = PEDIDOS.filter(p => p.competencia === comp);
+
+  // Todo colaborador que tem saldo no mês OU fez pedido entra no relatório.
+  const cpfs = new Set([
+    ...COLABORADORES.filter(c => saldoDe(c, comp) > 0).map(c => c.cpf),
+    ...pedidos.map(p => p.cpf),
+  ]);
+
+  const linhas = [...cpfs].map(cpf => {
+    const c = COLABORADORES.find(x => x.cpf === cpf) || {};
+    const meus  = pedidos.filter(p => p.cpf === cpf);
+    const saldo = saldoDe(c, comp);
+    const total = meus.reduce((s,p) => s + p.total, 0);
+    const pagar = meus.reduce((s,p) => s + (p.excedente || 0), 0);
+    return {
+      nome: c.nome || (meus[0] && meus[0].nome) || cpf,
+      cpf, saldo, total, pagar,
+      usado: Math.min(total, saldo),
+      sobra: Math.max(0, saldo - total),
+      qtd: meus.length,
+      pagamentos: [...new Set(meus.map(p => p.pagamento).filter(Boolean))].join(', '),
+      tiny: meus.map(p => p.tiny || '—').join(', '),
+      inativo: c.cpf && !c.ativo,
+    };
+  }).sort((a,b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+
+  const soma = ch => linhas.reduce((s,l) => s + l[ch], 0);
+  const semPedido = linhas.filter(l => !l.qtd).length;
+
+  const w = window.open('', '_blank');
+  w.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">
+  <title>Prêmio Cesta de Limpeza - ${rotuloComp(comp)}</title><style>
+  @page{size:A4 landscape;margin:10mm}
+  *{box-sizing:border-box}
+  body{font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#000;margin:0;line-height:1.35}
+  .topo{display:flex;align-items:flex-start;margin-bottom:12px}
+  .topo img{height:56px}
+  .emp{margin-left:auto;text-align:right;font-size:9.5px;line-height:1.55}
+  h1{font-size:14px;text-align:center;margin:4px 0 3px}
+  .sub-t{text-align:center;font-size:10px;color:#444;margin-bottom:12px}
+  .resumo{display:flex;gap:8px;margin-bottom:14px}
+  .bloco{flex:1;border:1px solid #000;border-radius:3px;padding:7px 9px}
+  .bloco.destaque{background:#EFEFEF}
+  .bloco span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.02em;color:#444}
+  .bloco b{display:block;font-size:14px;margin:2px 0 1px}
+  .bloco small{display:block;font-size:8.5px;color:#666}
+  table{border-collapse:collapse;width:100%}
+  td,th{border:1px solid #000;padding:4px 5px;vertical-align:top;text-align:left}
+  th{background:#EFEFEF;font-weight:bold;font-size:9.5px}
+  .d{text-align:right}
+  .c{text-align:center}
+  .zero{color:#888}
+  tfoot td{background:#EFEFEF;font-weight:bold}
+  .rodape{margin-top:14px;font-size:9.5px;color:#444}
+  </style></head><body>
+
+  <div class="topo">
+    <img src="${LOGO}" alt="Atrius">
+    <div class="emp"><b>ESSENCIAL PRODUTOS DE LIMPEZA LTDA</b><br>
+      11.094.675/0001-63<br>www.atrius.ind.br</div>
+  </div>
+
+  <h1>Prêmio Cesta de Limpeza — ${rotuloComp(comp).toUpperCase()}</h1>
+  <div class="sub-t">Emitido em ${new Date().toLocaleDateString('pt-BR')} ·
+    ${linhas.length} colaboradores · ${pedidos.length} pedidos</div>
+
+  <div class="resumo">
+    <div class="bloco">
+      <span>Benefício concedido</span><b>${brl(soma('saldo'))}</b>
+      <small>soma dos prêmios do mês</small></div>
+    <div class="bloco destaque">
+      <span>Benefício utilizado</span><b>${brl(soma('usado'))}</b>
+      <small>custo real da empresa</small></div>
+    <div class="bloco">
+      <span>Não utilizado</span><b>${brl(soma('sobra'))}</b>
+      <small>saldo que não virou pedido</small></div>
+    <div class="bloco destaque">
+      <span>Gasto além do benefício</span><b>${brl(soma('pagar'))}</b>
+      <small>a receber dos colaboradores</small></div>
+    <div class="bloco">
+      <span>Total dos pedidos</span><b>${brl(soma('total'))}</b>
+      <small>utilizado + excedente</small></div>
+  </div>
+
+  <table>
+    <thead><tr>
+      <th style="width:24%">Colaborador</th>
+      <th style="width:11%">CPF</th>
+      <th class="c" style="width:5%">Ped.</th>
+      <th class="d" style="width:10%">Benefício</th>
+      <th class="d" style="width:10%">Total pedido</th>
+      <th class="d" style="width:10%">Usado do benefício</th>
+      <th class="d" style="width:9%">Sobra</th>
+      <th class="d" style="width:10%">Gastou a mais</th>
+      <th style="width:11%">Pagamento</th>
+      <th style="width:9%">Tiny</th>
+    </tr></thead>
+    <tbody>
+      ${linhas.map(l => `
+      <tr>
+        <td>${esc(l.nome)}${l.inativo ? ' <span class="zero">(desligado)</span>' : ''}</td>
+        <td>${formatarCpf(l.cpf)}</td>
+        <td class="c">${l.qtd || '<span class="zero">—</span>'}</td>
+        <td class="d">${brl(l.saldo)}</td>
+        <td class="d">${l.qtd ? brl(l.total) : '<span class="zero">sem pedido</span>'}</td>
+        <td class="d">${brl(l.usado)}</td>
+        <td class="d">${l.sobra ? brl(l.sobra) : '<span class="zero">—</span>'}</td>
+        <td class="d">${l.pagar ? brl(l.pagar) : '<span class="zero">—</span>'}</td>
+        <td>${esc(l.pagamentos) || '<span class="zero">—</span>'}</td>
+        <td>${esc(l.tiny) || '<span class="zero">—</span>'}</td>
+      </tr>`).join('')}
+    </tbody>
+    <tfoot><tr>
+      <td colspan="3">Totais</td>
+      <td class="d">${brl(soma('saldo'))}</td>
+      <td class="d">${brl(soma('total'))}</td>
+      <td class="d">${brl(soma('usado'))}</td>
+      <td class="d">${brl(soma('sobra'))}</td>
+      <td class="d">${brl(soma('pagar'))}</td>
+      <td colspan="2"></td>
+    </tr></tfoot>
+  </table>
+
+  <div class="rodape">
+    ${semPedido ? `${semPedido} ${semPedido === 1
+      ? 'colaborador tinha saldo e não fez pedido'
+      : 'colaboradores tinham saldo e não fizeram pedido'}.<br>` : ''}
+    "Usado do benefício" é a parte do pedido coberta pelo prêmio, ou seja, o que a empresa
+    bancou. "Gastou a mais" é o que passou do prêmio e a empresa tem a receber.
+  </div>
+
+  <script>window.onload=()=>window.print()<\/script>
+  </body></html>`);
+  w.document.close();
+}
+
+function imprimirPedido(codigo){
+  const p = PEDIDOS.find(x => x.codigo === codigo);
+  if(!p) return;
+
+  const q4  = n => Number(n).toFixed(4).replace('.',',');
+  const n2  = n => (n/100).toFixed(2).replace('.',',');
+  const n4  = n => (n/100).toFixed(4).replace('.',',');
+  const kg3 = n => Number(n).toFixed(3).replace('.',',')
+                    .replace(/\B(?=(\d{3})+(?!\d)(?=,))/g,'.');
+
+  let somaQtd = 0, pesoLiq = 0;
+  const linhas = p.itens.map(i => {
+    const prod = PRODUTOS.find(x => x.sku === i.sku) || {};
+    somaQtd += i.quantidade;
+    pesoLiq += (prod.litragem || 0) * i.quantidade;
+    return `
+    <tr>
+      <td>${esc(i.nome)}</td>
+      <td>${esc(i.sku)}${prod.ean ? `<br><span class="sub">GTIN: ${esc(prod.ean)}</span>` : ''}
+          ${prod.ncm ? `<br><span class="sub"><b>NCM</b>: ${esc(prod.ncm)}</span>` : ''}</td>
+      <td class="d">${q4(i.quantidade)}</td>
+      <td class="c">${esc(prod.unidade || 'UN')}</td>
+      <td class="d">${n4(i.preco)}</td>
+      <td class="d">${n2(i.preco * i.quantidade)}</td>
+    </tr>`;
+  }).join('');
+
+  const pgtoValor = p.excedente ? n2(p.excedente) : '0,00';
+  const pgtoForma = p.excedente
+    ? esc(p.pagamento || '—')
+    : 'Prêmio Cesta de Limpeza';
+  const pgtoObs = p.excedente
+    ? 'Diferença paga pelo colaborador'
+    : 'Integralmente coberto pelo saldo';
+
+  const obs = [
+    `PREMIO CESTA DE LIMPEZA - ${rotuloComp(p.competencia).toUpperCase()}`,
+    p.excedente
+      ? `Saldo ${brl(p.saldo)} | Usado ${brl(p.saldo)} | A PAGAR ${brl(p.excedente)}`
+      : `Saldo ${brl(p.saldo)} | Usado ${brl(p.total)} | Sobrou ${brl(p.saldo - p.total)}`,
+    p.excedente && p.pagamento ? `Pagamento da diferença: ${p.pagamento}` : '',
+    p.obs ? `Obs.: ${p.obs}` : '',
+  ].filter(Boolean).join('<br>');
+
+  const numero = p.tiny ? esc(p.tiny) : esc(p.codigo);
+
+  const w = window.open('', '_blank');
+  w.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">
+  <title>Pedido de Venda ${numero}</title><style>
+  @page{size:A4;margin:12mm}
+  *{box-sizing:border-box}
+  body{font-family:Arial,Helvetica,sans-serif;font-size:10.5px;color:#000;margin:0;line-height:1.35}
+  .topo{display:flex;align-items:flex-start;margin-bottom:14px}
+  .topo img{height:62px;width:auto}
+  .emp{margin-left:auto;text-align:right;font-size:10px;line-height:1.55}
+  .emp b{font-size:10.5px}
+  h1{font-size:14px;text-align:center;margin:8px 0 15px;font-weight:bold}
+  table{border-collapse:collapse;width:100%}
+  td,th{border:1px solid #000;padding:4px 5px;vertical-align:top;text-align:left}
+  th{background:#EFEFEF;font-weight:bold;font-size:10px}
+  .c{text-align:center}
+  .d{text-align:right}
+  .sub{font-size:9px}
+  .rot{background:#EFEFEF;font-weight:bold;white-space:nowrap}
+  .cabecalho{display:flex;gap:10px;margin-bottom:12px;align-items:flex-start}
+  .cab-cliente{flex:1}
+  .cab-cliente .rot{width:78px}
+  .cab-numero{width:225px}
+  .cab-numero .rot{width:112px}
+  .itens{margin-bottom:12px}
+  .rodape-itens td{vertical-align:bottom}
+  .rodape-itens b{font-weight:bold}
+  .totais{width:100%;border-collapse:collapse}
+  .totais td{border:0;padding:0 0 0 10px;white-space:nowrap}
+  .totais td:first-child{text-align:right;font-weight:bold;width:100%}
+  .totais td:last-child{text-align:right;font-weight:bold}
+  .bloco{margin-bottom:12px}
+  .pesos .rot{width:95px}
+  .pesos td{width:25%}
+  .assinaturas{display:flex;gap:40px;margin-top:46px;font-size:10px}
+  .assina{flex:1}
+  .assina .risco{border-bottom:1px solid #000;padding-bottom:3px;margin-bottom:4px}
+  .assina .risco.data{max-width:190px;letter-spacing:2px}
+  .barra-topo{font-size:9px;margin-bottom:6px;text-align:right;letter-spacing:.02em}
+  @media print{.naoimprime{display:none}}
+  </style></head><body>
+
+  <div class="topo">
+    <img src="${LOGO}" alt="Atrius">
+    <div class="emp"><b>ESSENCIAL PRODUTOS DE LIMPEZA LTDA</b><br>
+      11.094.675/0001-63<br>www.atrius.ind.br<br>(51) 3191-2176</div>
+  </div>
+
+  <h1>Pedido de Venda Nº ${numero}</h1>
+
+  <div class="cabecalho">
+    <table class="cab-cliente">
+      <tr><td class="rot">Cliente</td>
+          <td>${esc(p.nome)}<br>CPF ${formatarCpf(p.cpf)}</td></tr>
+      <tr><td class="rot">Vendedor(a)</td><td>ESSENCIAL PROD DE LIMPEZA LTDA</td></tr>
+      <tr><td class="rot">Programa</td>
+          <td>PRÊMIO CESTA DE LIMPEZA · ${rotuloComp(p.competencia).toUpperCase()}</td></tr>
+    </table>
+    <table class="cab-numero">
+      <tr><td class="rot">Número do pedido</td><td>${numero}</td></tr>
+      <tr><td class="rot">Data</td><td>${esc(p.data)}</td></tr>
+      <tr><td class="rot">Data prevista</td><td>&nbsp;</td></tr>
+    </table>
+  </div>
+
+  <table class="itens">
+    <tr>
+      <th>Item</th>
+      <th>Código (SKU) /<br>GTIN / NCM</th>
+      <th class="d" style="width:62px">Qtd</th>
+      <th class="c" style="width:34px">Un</th>
+      <th class="d" style="width:70px">Preço un</th>
+      <th class="d" style="width:80px">Total</th>
+    </tr>
+    ${linhas}
+    <tr class="rodape-itens">
+      <td colspan="3">
+        <b>Número de itens:</b> ${p.itens.length}<br>
+        <b>Soma das quantidades:</b> ${q4(somaQtd)}
+      </td>
+      <td colspan="3">
+        <table class="totais">
+          <tr><td>Total de produtos</td><td>${n2(p.total)}</td></tr>
+          <tr><td>Valor IPI</td><td>0,00</td></tr>
+          <tr><td>Total do pedido</td><td>${n2(p.total)}</td></tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+  <table class="bloco">
+    <tr><th style="width:44px">Dias</th><th style="width:110px">Data vencimento</th>
+        <th>Forma de Pagamento</th><th class="d" style="width:82px">Valor</th>
+        <th style="width:190px">Observação</th></tr>
+    <tr><td>0</td><td>${esc(p.data)}</td><td>${pgtoForma}</td>
+        <td class="d">${pgtoValor}</td><td>${pgtoObs}</td></tr>
+  </table>
+
+  <table class="bloco pesos">
+    <tr><td class="rot">Peso Bruto</td><td>&nbsp;</td>
+        <td class="rot">Peso Líquido</td><td>${pesoLiq ? kg3(pesoLiq) : '&nbsp;'}</td></tr>
+  </table>
+
+  <table class="bloco">
+    <tr><th>Observações</th></tr>
+    <tr><td style="height:62px">${obs}</td></tr>
+  </table>
+
+  <div class="assinaturas">
+    <div class="assina"><div class="risco data">&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/</div>
+      Data de Recebimento</div>
+    <div class="assina"><div class="risco">&nbsp;</div>Assinatura do Recebedor</div>
+  </div>
+
+  <script>window.onload=()=>window.print()<\/script>
+  </body></html>`);
+  w.document.close();
+}
+
+/* -------------------------------------------------------------- integração */
+
+function telaIntegracao(){
+  const pend = PEDIDOS.filter(p => !p.tiny);
+  const comErro = pend.filter(p => p.tiny_erro);
+  el('adminCorpo').innerHTML = `
+    <div class="admin-cab"><h2>Integração Tiny</h2></div>
+    <div class="resumo-topo">
+      <div class="cartao-num"><small>Pedidos enviados</small>
+        <b class="verde">${PEDIDOS.filter(p => p.tiny).length}</b></div>
+      <div class="cartao-num"><small>Pendentes</small>
+        <b class="${pend.length?'vermelho':''}">${pend.length}</b></div>
+      <div class="cartao-num"><small>Recusados pelo Tiny</small>
+        <b class="${comErro.length?'vermelho':''}">${comErro.length}</b></div>
+    </div>
+    ${comErro.length ? `<div class="tabela">
+      <div class="cab-tabela"><span>Pedidos recusados</span></div>
+      ${comErro.map(p => `
+        <div class="linha">
+          <div class="info"><b>${esc(p.codigo)} · ${esc(p.nome)}</b>
+            <small>${esc(p.tiny_erro)}</small></div>
+        </div>`).join('')}
+    </div>
+    <p class="nota">Corrija o que o Tiny apontou e reenvie pelo Relatório de pedidos,
+    nos três pontinhos do pedido.</p>` : ''}
+    <div class="quadro">
+      <div class="sub">Endpoint <span class="mono">pedido.incluir.php</span></div>
+      <div class="sub">Vendedor <span class="mono">554974636</span></div>
+      <div class="sub">Marcador <span class="mono">Funcionários</span></div>
+      <div class="sub">Cliente <span>pessoa física, CPF do colaborador</span></div>
+    </div>
+    <p class="nota">O token fica como secret na Edge Function, no Supabase.
+    Ele nunca chega ao navegador, então não dá para editar por aqui.
+    Para trocar, vá em Edge Functions &rarr; Secrets.</p>
+    <p class="nota">Cadastre o marcador <span class="mono">Funcionários</span> no Tiny antes
+    do primeiro envio: alguns planos ignoram marcador que ainda não existe, e o pedido
+    entra sem a etiqueta.</p>`;
+}
+
+/* ------------------------------------------------------------- importação */
+
+function pedirPlanilha(tipo){ admin.importando = tipo; el('arqImport').click(); }
+
+async function lerPlanilha(input){
+  const arq = input.files && input.files[0];
+  input.value = '';
+  if(!arq) return;
+  try{
+    const linhas = /\.xlsx?$/i.test(arq.name)
+      ? await lerXlsx(arq) : lerCsv(await arq.text());
+    admin.linhasImport = linhas;
+    admin.previa = montarPrevia(admin.importando, linhas);
+  }catch(e){
+    return alert('Não foi possível ler a planilha: ' + (e.message || e));
+  }
+  if(!admin.previa.length)
+    return alert('A planilha não tem linhas de dados, ou os títulos das colunas '
+               + 'estão diferentes do modelo exportado.');
+  telaPrevia();
+}
+
+/* Aceita o mesmo formato do "Exportar planilha": ponto e vírgula ou vírgula. */
+function lerCsv(texto){
+  texto = texto.replace(/^\uFEFF/, '');
+  const cab = texto.split('\n')[0];
+  const sep = (cab.match(/;/g)||[]).length >= (cab.match(/,/g)||[]).length ? ';' : ',';
+  const linhas = [];
+  let campo = '', linha = [], aspas = false;
+  for(let k = 0; k < texto.length; k++){
+    const ch = texto[k];
+    if(aspas){
+      if(ch === '"' && texto[k+1] === '"'){ campo += '"'; k++; }
+      else if(ch === '"') aspas = false;
+      else campo += ch;
+    } else if(ch === '"') aspas = true;
+    else if(ch === sep){ linha.push(campo); campo = ''; }
+    else if(ch === '\n'){ linha.push(campo); linhas.push(linha); linha = []; campo = ''; }
+    else if(ch !== '\r') campo += ch;
+  }
+  if(campo || linha.length){ linha.push(campo); linhas.push(linha); }
+  return paraObjetos(linhas);
+}
+
+async function lerXlsx(arq){
+  if(!window.XLSX) await new Promise((ok, falha) => {
+    const t = document.createElement('script');
+    t.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+    t.onload = ok; t.onerror = () => falha(new Error('sem conexão para ler .xlsx'));
+    document.head.appendChild(t);
+  });
+  const wb = XLSX.read(await arq.arrayBuffer(), {type:'array'});
+  const aba = wb.Sheets[wb.SheetNames[0]];
+  return paraObjetos(XLSX.utils.sheet_to_json(aba, {header:1, raw:false, defval:''}));
+}
+
+function paraObjetos(linhas){
+  linhas = linhas.filter(l => l.some(c => String(c).trim() !== ''));
+  if(linhas.length < 2) return [];
+  const chave = t => String(t).trim().toUpperCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const cab = linhas[0].map(chave);
+  return linhas.slice(1).map((l, n) => {
+    const o = {_linha: n + 2};
+    cab.forEach((c, k) => o[c] = String(l[k] == null ? '' : l[k]).trim());
+    return o;
+  });
+}
+
+const emCentavos = v => {
+  const t = String(v == null ? '' : v)
+    .replace(/[^0-9,.-]/g, '').replace(/\.(?=\d{3}\b)/g, '').replace(',', '.');
+  const n = parseFloat(t);
+  return isFinite(n) ? Math.round(n * 100) : null;
+};
+
+/* ---------------------------------------------------- prévia da importação */
+
+function montarPrevia(tipo, linhas){
+  if(tipo === 'premio')   return previaPremio(linhas);
+  if(tipo === 'produtos') return previaProdutos(linhas);
+  return previaColaboradores(linhas);
+}
+
+function previaPremio(linhas){
+  const comp = admin.competencia;
+  return linhas.map(l => {
+    const cpf = digitos(l['CPF']);
+    const c = COLABORADORES.find(x => x.cpf === cpf);
+    if(!c) return {tipo:'erro', nome: l['NOME'] || cpf || '(sem nome)',
+                   antes:'CPF não cadastrado', depois:'linha ' + l._linha};
+    const valor = emCentavos(l['VALOR PREMIO (R$)'] || l['VALOR PREMIO'] || l['VALOR']);
+    if(valor === null || valor < 0)
+      return {tipo:'erro', nome:c.nome, antes:'valor inválido', depois:'linha ' + l._linha};
+    const atual = saldoDe(c, comp);
+    return {tipo: atual === valor ? 'igual' : (atual ? 'alterado' : 'novo'),
+            nome: c.nome, antes: brl(atual), depois: brl(valor),
+            gravar: {cpf, competencia: comp, valor}};
+  });
+}
+
+function previaColaboradores(linhas){
+  const vistos = new Set();
+  const saida = linhas.map(l => {
+    const cpf = digitos(l['CPF']);
+    const nome = (l['NOME'] || '').trim();
+    if(cpf.length !== 11)
+      return {tipo:'erro', nome: nome || '(sem nome)', antes:'CPF inválido',
+              depois:'linha ' + l._linha};
+    if(!nome) return {tipo:'erro', nome:cpf, antes:'sem nome', depois:'linha ' + l._linha};
+    vistos.add(cpf);
+    const c = COLABORADORES.find(x => x.cpf === cpf);
+    const ehAdmin = /ADMIN/i.test(l['PERFIL'] || '');
+    const ativo = !/INATIVO/i.test(l['SITUACAO'] || 'ATIVO');
+    const gravar = {cpf, nome, ativo, admin: ehAdmin};
+    if(!c) return {tipo:'novo', nome, antes:'—',
+                   depois: ativo ? 'ativo' : 'inativo', gravar};
+    const mudou = c.nome !== nome || !!c.ativo !== ativo || !!c.admin !== ehAdmin;
+    return {tipo: mudou ? 'alterado' : 'igual', nome,
+            antes: c.ativo ? 'ativo' : 'inativo',
+            depois: ativo ? 'ativo' : 'inativo', gravar};
+  });
+  if(admin.inativarAusentes)
+  COLABORADORES.filter(c => c.ativo && !vistos.has(c.cpf)).forEach(c =>
+    saida.push({tipo:'inativo', nome:c.nome, antes:'ativo', depois:'inativo',
+                gravar:{cpf:c.cpf, nome:c.nome, ativo:false, admin: !!c.admin}}));
+  return saida;
+}
+
+function previaProdutos(linhas){
+  return linhas.map(l => {
+    const sku = (l['CODIGO'] || '').trim();
+    const p = PRODUTOS.find(x => x.sku === sku);
+    if(!p) return {tipo:'erro', nome: l['DESCRICAO'] || sku || '(sem código)',
+                   antes:'código não cadastrado', depois:'linha ' + l._linha};
+    const preco = emCentavos(l['PRECO']);
+    if(preco === null || preco <= 0)
+      return {tipo:'erro', nome:p.nome, antes:'preço inválido', depois:'linha ' + l._linha};
+    const ativo = !/INATIVO/i.test(l['SITUACAO'] || 'ATIVO');
+    const nome  = (l['DESCRICAO'] || p.nome).trim();
+    const linha = (l['CATEGORIA'] || p.linha).trim().toUpperCase();
+    const gravar = {sku, nome, preco, linha, ativo, unidade:p.unidade, ncm:p.ncm,
+                    ean:p.ean, litragem:p.litragem, ordem:p.ordem,
+                    foto_url:p.foto_url || null};
+    if(!!p.ativo && !ativo)
+      return {tipo:'inativo', nome:p.nome, antes:'ativo', depois:'inativo', gravar};
+    const mudou = p.preco !== preco || p.nome !== nome || p.linha !== linha;
+    return {tipo: mudou ? 'alterado' : 'igual', nome:p.nome,
+            antes: brl(p.preco), depois: brl(preco), gravar};
+  });
+}
+
+function telaPrevia(){
+  const p = admin.previa || [];
+  const conta = t => p.filter(x => x.tipo === t).length;
+  const temErro = conta('erro') > 0;
+  const titulo = {premio:'valores do prêmio', produtos:'produtos', colaboradores:'cadastros'}[admin.importando];
+
+  el('adminCorpo').innerHTML = `
+    <div class="admin-cab"><h2>Conferir importação de ${titulo}</h2></div>
+    ${admin.importando === 'premio' ? `
+    <div class="quadro"><div class="sub">Competência
+      <span class="mono">${rotuloComp(admin.competencia).toUpperCase()}</span></div></div>` : ''}
+    ${admin.importando === 'colaboradores' ? `
+    <label class="opcao-import">
+      <input type="checkbox" ${admin.inativarAusentes ? 'checked' : ''}
+             onchange="admin.inativarAusentes=this.checked;
+                       admin.previa=montarPrevia(admin.importando,admin.linhasImport);
+                       telaPrevia()">
+      <span>Inativar quem não está na planilha
+        <small>Marque só se a planilha tem a lista completa de quem trabalha hoje.</small></span>
+    </label>` : ''}
+    <div class="resumo-topo">
+      <div class="cartao-num"><small>Alterados</small><b>${conta('alterado')}</b></div>
+      <div class="cartao-num"><small>Novos</small><b class="verde">${conta('novo')}</b></div>
+      <div class="cartao-num"><small>Inativados</small><b>${conta('inativo')}</b></div>
+      <div class="cartao-num"><small>Com erro</small><b class="${temErro?'vermelho':''}">${conta('erro')}</b></div>
+    </div>
+    <div class="previa-tabela">
+      ${p.map(x => `
+        <div class="previa-linha">
+          <span class="marca-tipo t-${x.tipo}">${
+            {novo:'novo', alterado:'alterado', igual:'sem mudança',
+             inativo:'inativar', erro:'erro'}[x.tipo]}</span>
+          <span>${esc(x.nome)}</span>
+          <span class="depois">${esc(x.antes)} → ${esc(x.depois)}</span>
+        </div>`).join('')}
+    </div>
+    ${temErro ? '<div class="aviso">Linhas com erro não serão gravadas. Corrija a planilha e importe de novo.</div>' : ''}
+    <div class="admin-cab" style="margin-top:6px">
+      <button class="btn" onclick="admin.previa=null;pintarAdmin()">Cancelar</button>
+      <button class="btn azul" onclick="confirmarImportacao()">Confirmar e gravar</button>
+    </div>
+    <p class="nota">Nada é gravado antes de você confirmar. Linhas sem mudança são ignoradas.</p>`;
+}
+
+async function confirmarImportacao(){
+  const linhas = (admin.previa || []).filter(x => x.gravar && x.tipo !== 'igual');
+  const tipo = admin.importando;
+  if(!linhas.length){
+    admin.previa = null; admin.importando = null;
+    return pintarAdmin();
+  }
+
+  const btn = document.querySelector('button.btn.azul[onclick*="confirmarImportacao"]');
+  if(btn){ btn.disabled = true; btn.textContent = 'Gravando...'; }
+
+  const dados = linhas.map(x => x.gravar);
+  let erro = null;
+  if(tipo === 'premio')
+    ({error: erro} = await sb.from('saldos').upsert(dados, {onConflict:'cpf,competencia'}));
+  else if(tipo === 'colaboradores')
+    ({error: erro} = await sb.from('colaboradores').upsert(dados, {onConflict:'cpf'}));
+  else
+    ({error: erro} = await sb.from('produtos').upsert(dados, {onConflict:'sku'}));
+
+  if(erro){
+    if(btn){ btn.disabled = false; btn.textContent = 'Confirmar e gravar'; }
+    return avisarErro(erro);
+  }
+
+  try{ await carregarDados(); }catch(e){ avisarErro(e); }
+  admin.previa = null; admin.importando = null; admin.linhasImport = null;
+  pintarAdmin();
+  alert(`${dados.length} ${dados.length === 1 ? 'linha gravada' : 'linhas gravadas'}.`);
+}
+
+/* ------------------------------------------------------------------ ficha */
+
+function abrirFicha(titulo, corpo, acao){
+  el('fichaTitulo').textContent = titulo;
+  el('fichaCorpo').innerHTML = '<div id="erroFicha"></div>' + corpo;
+  el('fichaPe').innerHTML = acao
+    ? `<button class="btn azul" style="flex:1" onclick="${acao}">Salvar</button>
+       <button class="btn" onclick="fecharFicha()">Cancelar</button>`
+    : `<button class="btn" style="flex:1" onclick="fecharFicha()">Fechar</button>`;
+  el('ficha').classList.add('aberta');
+}
+
+function fecharFicha(){
+  el('ficha').classList.remove('aberta');
+  admin.editando = null; admin.fotoNova = null;
+}
+
+function erroFicha(m){ el('erroFicha').innerHTML = `<div class="aviso">${esc(m)}</div>`; }
+
+const passaFiltro = x =>
+  admin.filtro === 'todos' || (admin.filtro === 'ativos' ? x.ativo : !x.ativo);
+const sufixoFiltro = () =>
+  admin.filtro === 'todos' ? '' : '-' + admin.filtro;
+
+function baixarCsv(nome, cabecalho, linhas){
+  const escapar = v => `"${String(v).replace(/"/g,'""')}"`;
+  const texto = '\uFEFF' + [cabecalho, ...linhas].map(l => l.map(escapar).join(';')).join('\r\n');
+  const url = URL.createObjectURL(new Blob([texto], {type:'text/csv;charset=utf-8'}));
+  const a = document.createElement('a');
+  a.href = url; a.download = nome; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+
+document.addEventListener('keydown', e => {
+  if(e.key !== 'Escape') return;
+  if(estado.ampliado) fecharVisor();
+  else if(el('painel').classList.contains('aberto')) fecharTudo();
+});
+</script>
+</body>
+</html>
