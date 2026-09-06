@@ -246,6 +246,15 @@ select{width:100%;border:1px solid var(--linha);border-radius:9px;padding:12px;
   padding:10px 16px;font-size:13.5px;font-weight:600;white-space:nowrap}
 .btn:hover{border-color:#C9D2DD;background:#FBFCFD}
 .btn.azul{background:var(--azul);border-color:var(--azul);color:#fff}
+.boas-vindas{max-width:560px;margin:6vh auto 0;text-align:center}
+.boas-vindas h2{font-size:26px;font-weight:800;margin-bottom:14px}
+.boas-vindas p{font-size:15.5px;color:var(--cinza);line-height:1.6;margin-bottom:8px}
+.boas-vindas .chamada{color:var(--azul);font-weight:600;margin-top:14px}
+@media(max-width:760px){
+  .boas-vindas{margin-top:3vh}
+  .boas-vindas h2{font-size:22px}
+  .boas-vindas p{font-size:14.5px}
+}
 .recorte-fundo{position:fixed;inset:0;z-index:120;background:rgba(15,23,42,.62);
   display:flex;align-items:center;justify-content:center;padding:16px}
 .recorte-fundo[hidden]{display:none}
@@ -1071,7 +1080,7 @@ function voltarUmNivel(){
   if(aberto('admin', 'menu-aberto')){ fecharLateral(); return true; }
   if(aberto('admin', 'aberta')){
     if(admin.previa){ admin.previa = null; admin.importando = null; pintarAdmin(); return true; }
-    if(admin.aba !== 'produtos'){ irAba('produtos'); return true; }
+    if(admin.aba !== 'inicio'){ irAba('inicio'); return true; }
     fecharAdmin(); return true;
   }
   return false;
@@ -1298,6 +1307,8 @@ function recomecar(){ fecharTudo(); window.scrollTo({top:0,behavior:'smooth'}); 
 function mostrarSeloDemo(){}
 
 const ABAS_ADMIN = [
+  {id:'inicio', rotulo:'Início',
+   icone:'<path d="M3 10l9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V10z"/><path d="M9 22V12h6v10"/>'},
   {id:'produtos', rotulo:'Produtos',
    icone:'<path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/>'},
   {id:'colaboradores', rotulo:'Colaboradores',
@@ -1310,7 +1321,7 @@ const ABAS_ADMIN = [
    icone:'<path d="M9 2v6M15 2v6M6 8h12v4a6 6 0 0 1-12 0V8zM12 18v4"/>'},
 ];
 
-const admin = {aba:'produtos', busca:'', filtro:'ativos', previa:null,
+const admin = {aba:'inicio', busca:'', filtro:'ativos', previa:null,
                editando:null, fotoNova:null, competencia: compAtual(), importando:null,
                linhasImport:null, inativarAusentes:true, filtroTiny:'todos'};
 
@@ -1376,8 +1387,8 @@ function recolherLateral(){
 }
 
 function pintarAdmin(){
-  ({produtos: telaProdutos, colaboradores: telaColaboradores, premio: telaPremio,
-    pedidos: telaPedidos, integracao: telaIntegracao}[admin.aba])();
+  ({inicio: telaInicio, produtos: telaProdutos, colaboradores: telaColaboradores,
+    premio: telaPremio, pedidos: telaPedidos, integracao: telaIntegracao}[admin.aba])();
 }
 
 function selo(ativo, acao, rotuloAria){
@@ -1402,6 +1413,24 @@ function repintar(desenhar){
   if(!novo) return;
   novo.focus();
   try{ novo.setSelectionRange(pos, pos); }catch(e){}
+}
+
+function saudacao(){
+  const h = Number(new Intl.DateTimeFormat('pt-BR',
+    {timeZone:'America/Sao_Paulo', hour:'numeric', hour12:false}).format(new Date()));
+  if(h < 12) return 'Bom dia';
+  if(h < 18) return 'Boa tarde';
+  return 'Boa noite';
+}
+
+function telaInicio(){
+  const nome = primeiroNome((estado.colaborador || {}).nome || '');
+  el('adminCorpo').innerHTML = `
+    <div class="boas-vindas">
+      <h2>${saudacao()}, ${esc(nome)}.</h2>
+      <p>Esta é a página de gerenciamento do benefício da Cesta de Limpeza da Atrius!</p>
+      <p class="chamada">Clique no menu lateral para gerenciar.</p>
+    </div>`;
 }
 
 function telaProdutos(){
