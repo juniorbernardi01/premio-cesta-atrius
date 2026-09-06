@@ -1009,7 +1009,43 @@ function fecharVisor(){
   document.body.style.overflow = '';
 }
 
+/* ------------------------------------------------- botão voltar do navegador
+   Cada camada aberta (aba da administração, painel, ficha, gaveta) vira uma
+   entrada no histórico. O voltar fecha a camada de cima em vez de sair do site.
+   Só sai quando não há mais nada aberto. */
+
+let historicoPronto = false;
+
+function marcarHistorico(){
+  history.pushState({app: true}, '');
+  historicoPronto = true;
+}
+
+function aberto(id, classe){
+  const n = el(id);
+  return n && n.classList.contains(classe);
+}
+
+/* Fecha a camada mais externa. Devolve false quando não há nada a fechar. */
+function voltarUmNivel(){
+  if(aberto('ficha', 'aberta')){ fecharFicha(); return true; }
+  if(aberto('painel', 'aberto')){ fecharTudo(); return true; }
+  if(aberto('admin', 'menu-aberto')){ fecharLateral(); return true; }
+  if(aberto('admin', 'aberta')){
+    if(admin.previa){ admin.previa = null; admin.importando = null; pintarAdmin(); return true; }
+    if(admin.aba !== 'produtos'){ irAba('produtos'); return true; }
+    fecharAdmin(); return true;
+  }
+  return false;
+}
+
+addEventListener('popstate', () => {
+  if(voltarUmNivel()) marcarHistorico();
+  else historicoPronto = false;
+});
+
 function abrir(etapa){
+  if(!aberto('painel','aberto')) marcarHistorico();
   estado.etapa = etapa;
   el('fundoModal').classList.add('aberto');
   el('painel').classList.add('aberto');
@@ -1255,6 +1291,7 @@ function competenciasDisponiveis(){
 }
 
 function abrirAdmin(){
+  marcarHistorico();
   el('admin').classList.add('aberta');
   document.body.style.overflow = 'hidden';
   el('lateralItens').innerHTML = ABAS_ADMIN.map(a => `
@@ -1281,6 +1318,7 @@ function verComoColaborador(){
 }
 
 function irAba(id){
+  if(historicoPronto && admin.aba !== id) marcarHistorico();
   admin.aba = id; admin.busca = ''; admin.filtro = 'ativos'; admin.previa = null;
   el('lateralItens').querySelectorAll('.lateral-item').forEach((b,i) => {
     if(ABAS_ADMIN[i].id === id) b.setAttribute('aria-current','page');
@@ -1291,7 +1329,7 @@ function irAba(id){
   document.querySelector('.admin-corpo').scrollTop = 0;
 }
 
-function abrirLateral(){ el('admin').classList.add('menu-aberto'); }
+function abrirLateral(){ marcarHistorico(); el('admin').classList.add('menu-aberto'); }
 function fecharLateral(){ el('admin').classList.remove('menu-aberto'); }
 function recolherLateral(){
   const a = el('admin');
@@ -1838,11 +1876,13 @@ function verPedidoAdmin(codigo){
 async function enviarAoTiny(codigo){
   const {data, error} = await sb.functions.invoke('enviar-tiny', {body:{codigo}});
   if(error){
-    let msg = error.message;
-    try{ msg = (await error.context.json()).erro || msg; }catch(e){}
-    return {erro: msg};
+    let msg = null;
+    try{ msg = (await error.context.json()).erro; }catch(e){}
+    if(msg) return {erro: msg, doTiny: true};
+    return {erro: 'não foi possível falar com a função enviar-tiny '
+                + `(${error.message}). Verifique o deploy no Supabase.`};
   }
-  if(data && data.erro) return {erro: data.erro};
+  if(data && data.erro) return {erro: data.erro, doTiny: true};
   return {numero: data && data.numero};
 }
 
@@ -1855,7 +1895,7 @@ async function reenviarTiny(codigo){
   const r = await enviarAoTiny(codigo);
   if(r.erro){
     if(btn){ btn.disabled = false; btn.textContent = 'Enviar ao Tiny'; }
-    erroFicha('Tiny recusou: ' + esc(r.erro));
+    erroFicha((r.doTiny ? 'Tiny recusou: ' : 'Falha no envio: ') + esc(r.erro));
     p.tiny_erro = r.erro;
     return;
   }
@@ -2188,18 +2228,18 @@ function telaIntegracao(){
         <b class="verde">${PEDIDOS.filter(p => p.tiny).length}</b></div>
       <div class="cartao-num"><small>Pendentes</small>
         <b class="${pend.length?'vermelho':''}">${pend.length}</b></div>
-      <div class="cartao-num"><small>Recusados pelo Tiny</small>
+      <div class="cartao-num"><small>Com falha no envio</small>
         <b class="${comErro.length?'vermelho':''}">${comErro.length}</b></div>
     </div>
     ${comErro.length ? `<div class="tabela">
-      <div class="cab-tabela"><span>Pedidos recusados</span></div>
+      <div class="cab-tabela"><span>Envios com falha</span></div>
       ${comErro.map(p => `
         <div class="linha">
           <div class="info"><b>${esc(p.codigo)} · ${esc(p.nome)}</b>
             <small>${esc(p.tiny_erro)}</small></div>
         </div>`).join('')}
     </div>
-    <p class="nota">Corrija o que o Tiny apontou e reenvie pelo Relatório de pedidos,
+    <p class="nota">Corrija o que a mensagem apontar e reenvie pelo Relatório de pedidos,
     nos três pontinhos do pedido.</p>` : ''}
     <div class="quadro">
       <div class="sub">Endpoint <span class="mono">pedido.incluir.php</span></div>
@@ -2445,6 +2485,7 @@ async function confirmarImportacao(){
 /* ------------------------------------------------------------------ ficha */
 
 function abrirFicha(titulo, corpo, acao){
+  if(!aberto('ficha','aberta')) marcarHistorico();
   el('fichaTitulo').textContent = titulo;
   el('fichaCorpo').innerHTML = '<div id="erroFicha"></div>' + corpo;
   el('fichaPe').innerHTML = acao
