@@ -246,6 +246,26 @@ select{width:100%;border:1px solid var(--linha);border-radius:9px;padding:12px;
   padding:10px 16px;font-size:13.5px;font-weight:600;white-space:nowrap}
 .btn:hover{border-color:#C9D2DD;background:#FBFCFD}
 .btn.azul{background:var(--azul);border-color:var(--azul);color:#fff}
+.recorte-fundo{position:fixed;inset:0;z-index:120;background:rgba(15,23,42,.62);
+  display:flex;align-items:center;justify-content:center;padding:16px}
+.recorte-fundo[hidden]{display:none}
+.recorte-caixa{background:var(--branco);border-radius:16px;padding:18px;width:100%;max-width:380px}
+.recorte-titulo{font-size:16px;font-weight:700;margin-bottom:12px}
+.recorte-palco{position:relative;width:100%;aspect-ratio:1;border-radius:12px;overflow:hidden;
+  background:#EDF1F7;touch-action:none;cursor:grab}
+.recorte-palco:active{cursor:grabbing}
+.recorte-palco img{position:absolute;left:50%;top:50%;transform-origin:0 0;
+  max-width:none;user-select:none;-webkit-user-drag:none}
+.recorte-grade{position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to right,transparent 33.3%,rgba(0,0,0,.16) 33.3% 33.4%,
+    transparent 33.4% 66.6%,rgba(0,0,0,.16) 66.6% 66.7%,transparent 66.7%),
+  linear-gradient(to bottom,transparent 33.3%,rgba(0,0,0,.16) 33.3% 33.4%,
+    transparent 33.4% 66.6%,rgba(0,0,0,.16) 66.6% 66.7%,transparent 66.7%)}
+.recorte-zoom{display:block;font-size:13px;color:var(--cinza);margin:14px 0 6px}
+.recorte-zoom input{width:100%;margin-top:6px;accent-color:var(--azul)}
+.recorte-nota{font-size:12.5px;color:var(--cinza);min-height:18px;margin-bottom:12px}
+.recorte-botoes{display:flex;gap:9px}
+.recorte-botoes .btn{flex:1}
 .btn.perigo{color:var(--vermelho);border-color:#F3CFCF}
 .filtro-linha{display:flex;gap:10px;margin-bottom:14px}
 .filtro-linha input{flex:1;padding:11px 13px;font-size:14.5px;min-width:0}
@@ -584,6 +604,24 @@ select{width:100%;border:1px solid var(--linha);border-radius:9px;padding:12px;
 
 <input type="file" id="arqImport" accept=".xlsx,.xls" hidden onchange="lerPlanilha(this)">
 <input type="file" id="arqFoto" accept="image/*" hidden onchange="trocarFoto(this)">
+
+<div class="recorte-fundo" id="recorteFundo" hidden>
+  <div class="recorte-caixa">
+    <div class="recorte-titulo">Ajustar a foto</div>
+    <div class="recorte-palco" id="recortePalco">
+      <img id="recorteImg" alt="" draggable="false">
+      <div class="recorte-grade"></div>
+    </div>
+    <label class="recorte-zoom">Zoom
+      <input type="range" id="recorteZoom" min="100" max="400" value="100"
+             oninput="recorte.escala=this.value/100; pintarRecorte()"></label>
+    <div class="recorte-nota" id="recorteNota"></div>
+    <div class="recorte-botoes">
+      <button class="btn" onclick="fecharRecorte()">Cancelar</button>
+      <button class="btn azul" onclick="aplicarRecorte()">Usar esta foto</button>
+    </div>
+  </div>
+</div>
 
 <div class="visor" id="visor" role="dialog" aria-modal="true">
   <div class="visor-topo"><button class="visor-fechar" onclick="fecharVisor()" aria-label="Fechar">&times;</button></div>
@@ -1475,7 +1513,7 @@ function editarProduto(sku){
           <button class="btn" onclick="el('arqFoto').click()">Escolher imagem</button>
           <button class="btn perigo" id="btnTirarFoto" ${p.foto?'':'hidden'}
                   onclick="removerFoto()">Remover foto</button>
-          <span class="nota" style="margin:0">PNG com fundo transparente fica melhor.</span>
+          <span class="nota" style="margin:0">Ao escolher, dá para enquadrar e dar zoom. A foto é salva em 600x600.</span>
         </div>
       </div>
     </div>
@@ -1512,18 +1550,107 @@ function removerFoto(){
   const b = el('btnTirarFoto'); if(b) b.hidden = true;
 }
 
+const LADO_FOTO = 600;   // a foto final sai 600x600
+const recorte = {img:null, escala:1, x:0, y:0, base:1, arrastando:null};
+
 function trocarFoto(input){
   const arq = input.files && input.files[0];
   input.value = '';
   if(!arq) return;
   const leitor = new FileReader();
-  leitor.onload = () => {
-    admin.fotoNova = leitor.result;
-    el('fichaFoto').innerHTML = `<img src="${leitor.result}" alt="">`;
-    const b = el('btnTirarFoto'); if(b) b.hidden = false;
-  };
+  leitor.onload = () => abrirRecorte(leitor.result, arq);
   leitor.readAsDataURL(arq);
 }
+
+function abrirRecorte(dataUrl, arq){
+  const img = el('recorteImg');
+  img.onload = () => {
+    // "base" é a escala que faz a imagem cobrir o quadrado inteiro
+    const lado = el('recortePalco').clientWidth;
+    recorte.base = lado / Math.min(img.naturalWidth, img.naturalHeight);
+    recorte.escala = 1; recorte.x = 0; recorte.y = 0;
+    el('recorteZoom').value = 100;
+    el('recorteNota').textContent =
+      `Original ${img.naturalWidth}x${img.naturalHeight}, ${(arq.size/1024).toFixed(0)} KB. `
+      + `Vai ser salva em ${LADO_FOTO}x${LADO_FOTO}.`;
+    pintarRecorte();
+  };
+  img.src = dataUrl;
+  recorte.img = img;
+  el('recorteFundo').hidden = false;
+}
+
+function pintarRecorte(){
+  const img = el('recorteImg');
+  const lado = el('recortePalco').clientWidth;
+  const e = recorte.base * recorte.escala;
+  const larg = img.naturalWidth * e, alt = img.naturalHeight * e;
+
+  // não deixa sobrar buraco: o arraste para nas bordas da imagem
+  const limX = Math.max(0, (larg - lado) / 2);
+  const limY = Math.max(0, (alt  - lado) / 2);
+  recorte.x = Math.min(limX, Math.max(-limX, recorte.x));
+  recorte.y = Math.min(limY, Math.max(-limY, recorte.y));
+
+  img.style.width  = img.naturalWidth + 'px';
+  img.style.height = img.naturalHeight + 'px';
+  img.style.transform =
+    `translate(${-larg/2 + recorte.x}px, ${-alt/2 + recorte.y}px) scale(${e})`;
+}
+
+function fecharRecorte(){ el('recorteFundo').hidden = true; }
+
+function aplicarRecorte(){
+  const img = el('recorteImg');
+  const lado = el('recortePalco').clientWidth;
+  const e = recorte.base * recorte.escala;
+
+  // canto de onde recortar, em pixels da imagem original
+  const sx = (img.naturalWidth  * e / 2 - recorte.x - lado / 2) / e;
+  const sy = (img.naturalHeight * e / 2 - recorte.y - lado / 2) / e;
+  const s  = lado / e;
+
+  const tela = document.createElement('canvas');
+  tela.width = tela.height = LADO_FOTO;
+  const ctx = tela.getContext('2d');
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(img, sx, sy, s, s, 0, 0, LADO_FOTO, LADO_FOTO);
+
+  // WebP corta bem o peso; PNG sobra para quem não tiver suporte
+  let saida = tela.toDataURL('image/webp', 0.86);
+  if(!saida.startsWith('data:image/webp')) saida = tela.toDataURL('image/png');
+
+  admin.fotoNova = saida;
+  el('fichaFoto').innerHTML = `<img src="${saida}" alt="">`;
+  const b = el('btnTirarFoto'); if(b) b.hidden = false;
+  fecharRecorte();
+}
+
+/* arrastar e dar zoom no palco */
+addEventListener('DOMContentLoaded', () => {
+  const palco = el('recortePalco');
+  if(!palco) return;
+
+  palco.addEventListener('pointerdown', ev => {
+    recorte.arrastando = {x: ev.clientX - recorte.x, y: ev.clientY - recorte.y};
+    palco.setPointerCapture(ev.pointerId);
+  });
+  palco.addEventListener('pointermove', ev => {
+    if(!recorte.arrastando) return;
+    recorte.x = ev.clientX - recorte.arrastando.x;
+    recorte.y = ev.clientY - recorte.arrastando.y;
+    pintarRecorte();
+  });
+  ['pointerup','pointercancel'].forEach(t =>
+    palco.addEventListener(t, () => recorte.arrastando = null));
+
+  palco.addEventListener('wheel', ev => {
+    ev.preventDefault();
+    recorte.escala = Math.min(4, Math.max(1, recorte.escala * (ev.deltaY < 0 ? 1.1 : 0.9)));
+    el('recorteZoom').value = Math.round(recorte.escala * 100);
+    pintarRecorte();
+  }, {passive:false});
+});
 
 async function salvarProduto(){
   const p = PRODUTOS.find(x => x.sku === admin.editando.sku);
