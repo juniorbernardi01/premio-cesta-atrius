@@ -3,8 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Prêmio Cesta de Limpeza — Atrius</title>
-<link rel="icon" href="" data-logo-icone>
+<title>Atrius — Meu benefício</title>
+<meta name="apple-mobile-web-app-title" content="Meu benefício">
+<meta name="theme-color" content="#17479E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E %3Crect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%22%2317479E%22/%3E %3Crect x=%2212%22 y=%2226%22 width=%2240%22 height=%2226%22 rx=%223%22 fill=%22%23fff%22/%3E %3Crect x=%229%22 y=%2219%22 width=%2246%22 height=%2211%22 rx=%223%22 fill=%22%23fff%22/%3E %3Crect x=%2228%22 y=%2219%22 width=%228%22 height=%2233%22 fill=%22%2317479E%22/%3E %3Cpath d=%22M32 19c-4-9-14-8-14-2 0 3 3 4 6 4h8z%22 fill=%22%23fff%22/%3E %3Cpath d=%22M32 19c4-9 14-8 14-2 0 3-3 4-6 4h-8z%22 fill=%22%23fff%22/%3E %3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -634,7 +636,6 @@ const SEM_FOTO = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" 
 
 sb.auth.getSession().then(({data}) => { if(data.session) iniciarSessao(); });
 document.querySelectorAll('[data-logo]').forEach(i => i.src = LOGO);
-document.querySelectorAll('[data-logo-icone]').forEach(i => i.href = LOGO);
 el('entradaCompetencia').textContent = 'Competência ' + COMPETENCIA.rotulo.toLowerCase();
 pintarEntrada();
 
