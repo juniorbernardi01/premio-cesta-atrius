@@ -1869,8 +1869,51 @@ function verPedidoAdmin(codigo){
     </div>
     ${!p.tiny ? `<button class="btn azul" style="width:100%;margin-bottom:9px"
       onclick="reenviarTiny('${esc(p.codigo)}')">Tentar enviar ao Tiny de novo</button>` : ''}
-    <button class="btn" style="width:100%" onclick="imprimirPedido('${esc(p.codigo)}')">
-      Baixar PDF no padrão do Tiny</button>`, null);
+    <button class="btn" style="width:100%;margin-bottom:9px"
+      onclick="imprimirPedido('${esc(p.codigo)}')">Baixar PDF no padrão do Tiny</button>
+    <button class="btn perigo" style="width:100%"
+      onclick="excluirPedido('${esc(p.codigo)}')">Excluir pedido</button>`, null);
+}
+
+async function excluirPedido(codigo){
+  const p = PEDIDOS.find(x => x.codigo === codigo);
+  if(!p) return;
+
+  const aviso = p.tiny
+    ? `\n\nO pedido nº ${p.tiny} será CANCELADO no Tiny também.`
+    : '';
+
+  if(!confirm(`Excluir o pedido ${p.codigo} de ${p.nome}, no valor de ${brl(p.total)}?`
+            + aviso + '\n\nNão dá para desfazer.')) return;
+
+  const btn = document.querySelector('#fichaCorpo button.btn.perigo');
+  if(btn){ btn.disabled = true; btn.textContent = 'Excluindo...'; }
+
+  // Cancela no Tiny primeiro. Se falhar, não apaga aqui — os dois têm que
+  // contar a mesma história, senão fica um pedido fantasma valendo estoque.
+  if(p.tiny){
+    const {error, data} = await sb.functions.invoke('enviar-tiny',
+      {body:{codigo, acao:'cancelar'}});
+    let falha = null;
+    if(error){ try{ falha = (await error.context.json()).erro; }
+               catch(e){ falha = error.message; } }
+    else if(data && data.erro) falha = data.erro;
+
+    if(falha){
+      if(btn){ btn.disabled = false; btn.textContent = 'Excluir pedido'; }
+      return erroFicha('Não deu para cancelar no Tiny, então o pedido não foi '
+                     + 'excluído aqui: ' + esc(falha));
+    }
+  }
+
+  const {error} = await sb.from('pedidos').delete().eq('codigo', codigo);
+  if(error){
+    if(btn){ btn.disabled = false; btn.textContent = 'Excluir pedido'; }
+    return avisarErro(error);
+  }
+
+  await carregarPedidos();
+  fecharFicha(); pintarAdmin();
 }
 
 async function enviarAoTiny(codigo){
