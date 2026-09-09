@@ -993,9 +993,20 @@ function mudar(sku, delta){
 const total = () => Object.values(estado.carrinho).reduce((s,i)=>s+i.preco*i.quantidade,0);
 const contar = () => Object.values(estado.carrinho).reduce((s,i)=>s+i.quantidade,0);
 
+/* Quanto do prêmio deste mês já foi consumido por pedidos anteriores.
+   Cancelado não conta. */
+function usadoNoMes(){
+  const c = estado.colaborador;
+  if(!c) return 0;
+  return PEDIDOS
+    .filter(p => p.cpf === c.cpf && p.competencia === compAtual() && !p.cancelado)
+    .reduce((s,p) => s + (p.total - (p.excedente || 0)), 0);
+}
+
 function calcular(){
   const t = total();
-  const limite = estado.colaborador ? estado.colaborador.saldo : 0;
+  const premio = estado.colaborador ? estado.colaborador.saldo : 0;
+  const limite = Math.max(0, premio - usadoNoMes());
   const usado = Math.min(t, limite);
   return {total:t, limite, usado, sobra: Math.max(0, limite-t), excedente: Math.max(0, t-limite)};
 }
@@ -1187,15 +1198,19 @@ function pintar(){
     corpo.innerHTML = Object.keys(porMes).length
       ? Object.keys(porMes).sort().reverse().map(comp => {
           const lista = porMes[comp];
-          const saldo = lista[0].saldo;
-          const usado = lista.reduce((s,x) => s + Math.min(x.total, x.saldo), 0);
-          const pagar = lista.reduce((s,x) => s + (x.excedente||0), 0);
+          const validos = lista.filter(x => !x.cancelado);
+          const premio = (COLABORADORES.find(c => c.cpf === cpf) || {}).saldos?.[comp]
+                      ?? validos[0]?.saldo ?? lista[0].saldo;
+          const usado = validos.reduce((s,x) => s + (x.total - (x.excedente||0)), 0);
+          const pagar = validos.reduce((s,x) => s + (x.excedente||0), 0);
+          const sobra = Math.max(0, premio - usado);
           return `
           <div class="grupo-mes">
             <h3>${rotuloComp(comp)}</h3>
             <div class="quadro">
-              <div class="sub">Prêmio do mês <span>${brl(saldo)}</span></div>
+              <div class="sub">Prêmio do mês <span>${brl(premio)}</span></div>
               <div class="sub">Usado <span>${brl(usado)}</span></div>
+              <div class="sub">Ainda disponível <span>${brl(sobra)}</span></div>
               ${pagar ? `<div class="sub" style="color:var(--vermelho)">
                 Saldo pago <span>${brl(pagar)}</span></div>` : ''}
             </div>
@@ -1203,7 +1218,7 @@ function pintar(){
               <button class="hist" onclick="verMeuPedido('${esc(x.codigo)}')">
                 <div><b>${esc(x.data)}</b>
                   <small>${x.itens.length} ${x.itens.length===1?'item':'itens'} ·
-                  ${x.tiny ? 'em separação' : 'aguardando'}</small></div>
+                  ${x.cancelado ? 'cancelado' : x.tiny ? 'em separação' : 'aguardando'}</small></div>
                 <span class="valor">${brl(x.total)}</span>
               </button>`).join('')}
           </div>`;
