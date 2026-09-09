@@ -552,7 +552,7 @@ select{width:100%;border:1px solid var(--linha);border-radius:9px;padding:12px;
     <div class="saldo-linha" id="saldoLinha">
       <span id="saldoNormal">Pedido <b id="usado">R$ 0,00</b> de <b id="limite">R$ 0,00</b></span>
       <span id="saldoZero" hidden>
-        <span class="selo-sem">Sem prêmio este mês</span>
+        <span class="selo-sem" id="seloSem">Sem prêmio este mês</span>
       </span>
       <span class="direita" id="restante"></span>
     </div>
@@ -892,9 +892,8 @@ function aposEntrar(conta){
   }
   el('entrada').classList.remove('aberta');
   el('ola').innerHTML = conta.saldo > 0
-    ? `Olá, <b>${esc(primeiroNome(conta.nome))}</b>, esse mês você tem
-       <span class="valor">${brl(conta.saldo)}</span>`
-    : `Olá, <b>${esc(primeiroNome(conta.nome))}</b>, você não tem prêmio este mês`;
+    ? '' : '';
+  atualizarSaudacao();
   el('btnAdmin').hidden = !conta.admin;
 
   el('programa').textContent = 'Prêmio Cesta de Limpeza · ' + COMPETENCIA.rotulo;
@@ -1011,9 +1010,32 @@ function calcular(){
   return {total:t, limite, usado, sobra: Math.max(0, limite-t), excedente: Math.max(0, t-limite)};
 }
 
+/* A saudação mostra o que ainda dá para gastar, não o valor cheio do prêmio.
+   Assim ela acompanha os pedidos já feitos no mês. */
+function atualizarSaudacao(){
+  const c = estado.colaborador;
+  if(!c) return;
+  const nome = esc(primeiroNome(c.nome));
+  const premio = c.saldo || 0;
+  const resta = Math.max(0, premio - usadoNoMes());
+
+  el('ola').innerHTML =
+    !premio  ? `Olá, <b>${nome}</b>, você não tem prêmio este mês`
+    : resta  ? `Olá, <b>${nome}</b>, ainda tem <span class="valor">${brl(resta)}</span>
+                do seu prêmio`
+             : `Olá, <b>${nome}</b>, você já usou todo o prêmio deste mês`;
+}
+
 function atualizarSaldo(){
   const c = calcular(), n = contar();
+  const premio = estado.colaborador ? estado.colaborador.saldo : 0;
   const semSaldo = c.limite === 0;
+  // sem saldo por dois motivos diferentes: não recebeu prêmio, ou já gastou tudo
+  const jaUsou = semSaldo && premio > 0;
+
+  el('seloSem').textContent = jaUsou
+    ? 'Prêmio deste mês já usado'
+    : 'Sem prêmio este mês';
 
   el('barraPedido').classList.toggle('sem-saldo', semSaldo);
   el('saldoNormal').hidden = semSaldo;
@@ -1030,15 +1052,18 @@ function atualizarSaldo(){
   const aviso = el('avisoPagar');
   aviso.hidden = c.excedente === 0;
   if(c.excedente > 0)
-    aviso.innerHTML = semSaldo
-      ? `Sem prêmio este mês: você pagará <b>${brl(c.total)}</b> por este pedido.`
-      : `Você pagará apenas a diferença de <b>${brl(c.excedente)}</b> por este pedido.`;
+    aviso.innerHTML = !semSaldo
+      ? `Você pagará apenas a diferença de <b>${brl(c.excedente)}</b> por este pedido.`
+      : jaUsou
+        ? `Você já usou todo o prêmio deste mês: vai pagar <b>${brl(c.total)}</b> por este pedido.`
+        : `Sem prêmio este mês: você pagará <b>${brl(c.total)}</b> por este pedido.`;
 
   el('contagem').textContent = n === 1 ? '1 item' : n + ' itens';
   el('totalRodape').textContent = brl(c.total);
   el('resumoRodape').classList.toggle('estourou', c.excedente > 0);
   el('barraPedido').classList.toggle('estourou', c.excedente > 0);
   el('btnVer').disabled = n === 0;
+  atualizarSaudacao();
 }
 
 function ampliar(sku){
